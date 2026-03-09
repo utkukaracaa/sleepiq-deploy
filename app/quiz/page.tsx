@@ -9,21 +9,15 @@ interface Insight {
   type: "quote" | "fact" | "book";
   text: string;
   source: string;
-}
-
-interface CompanyBadge {
-  name: string;
-  initial: string;
-  color: string;
-  bg: string;
+  researcher?: { initials: string; name: string; institution: string; color: string };
 }
 
 interface Testimonial {
   headline: string;
-  companies: CompanyBadge[];
   quote: string;
   person: string;
   role: string;
+  photoUrl: string;
   initials: string;
   avatarColor: string;
   corporateFact: string;
@@ -56,6 +50,12 @@ const PHASES: Phase[] = [
       type: "fact",
       text: "6 saatten az uyuyan birinin bilişsel performansı, 10 gün içinde tamamen uykusuz kalmakla eşdeğer hale gelir — ama kişi bunu fark etmez.",
       source: "Van Dongen et al., University of Pennsylvania (2003)",
+      researcher: {
+        initials: "HVD",
+        name: "Hans Van Dongen",
+        institution: "University of Pennsylvania",
+        color: "#0891B2",
+      },
     },
   },
   {
@@ -65,16 +65,10 @@ const PHASES: Phase[] = [
     subtitle: "Seni neyin motive ettiğini anlıyoruz",
     testimonial: {
       headline: "Dünyanın en başarılı şirketleri bunu çalışanlarından talep ediyor",
-      companies: [
-        { name: "Google",         initial: "G",  color: "#4285F4", bg: "rgba(66,133,244,0.12)"  },
-        { name: "Apple",          initial: "⌘",  color: "#A8A9AD", bg: "rgba(168,169,173,0.12)" },
-        { name: "Nike",           initial: "✓",  color: "#F97316", bg: "rgba(249,115,22,0.12)"  },
-        { name: "Goldman",        initial: "GS", color: "#22C55E", bg: "rgba(34,197,94,0.12)"   },
-        { name: "Aetna",          initial: "A",  color: "#EF4444", bg: "rgba(239,68,68,0.12)"   },
-      ],
       quote: "\"Uyku benim için müzakere edilemez. 8 saat uyuduğumda daha net düşünüyor, daha iyi kararlar alıyorum. Yorgunluk üzerinden liderlik edemezsin.\"",
       person: "Jeff Bezos",
       role: "Amazon Kurucusu & Yönetim Kurulu Başkanı",
+      photoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29.jpg/200px-Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29.jpg",
       initials: "JB",
       avatarColor: "#FF9900",
       corporateFact: "Aetna Insurance, 7+ saat uyuduğunu belgeleyen çalışanlarına yılda 300$ bonus veriyor. Şimdiye kadar 13.000'den fazla çalışan bu programdan yararlandı.",
@@ -106,21 +100,31 @@ const PHASES: Phase[] = [
 ];
 
 // ─── Question definitions ─────────────────────────────────────────────────────
+interface InterstitialCard {
+  emoji: string;
+  label: string;
+  text: string;
+  source: string;
+}
+
 interface Question {
   id: keyof QuizAnswers;
   question: string;
   subtext?: string;
   options: string[];
   phase: number;
+  autoAdvance?: boolean;
+  afterCard?: InterstitialCard;
 }
 
 const QUESTIONS: Question[] = [
   // Q0 — Segmentation
   {
     id: "ageSegment",
-    question: "Yaş aralığın nedir?",
+    question: "Yaşın kaç?",
     phase: 0,
     options: ["18–24", "25–34", "35–44", "45+"],
+    autoAdvance: true,
   },
   // Phase 1 — Sleep Baseline
   {
@@ -134,6 +138,12 @@ const QUESTIONS: Question[] = [
     question: "Uykuya dalman genelde ne kadar sürüyor?",
     phase: 1,
     options: ["Yatağa girdiğim andan itibaren", "10 dakikadan az", "10–30 dakika", "30–60 dakika", "1 saatten fazla"],
+    afterCard: {
+      emoji: "⏱️",
+      label: "Biliyor muydun?",
+      text: "Uykuya dalmak 20 dakikadan uzun sürüyorsa buna \"uyku gecikmesi\" denir ve bu başlı başına bir uyku bozukluğu işaretidir. İdeal süre 7–15 dakikadır.",
+      source: "American Academy of Sleep Medicine",
+    },
   },
   {
     id: "wakeCount",
@@ -153,6 +163,12 @@ const QUESTIONS: Question[] = [
     question: "Sabahları dinlenmiş uyanamamak seni ne kadar etkiliyor?",
     phase: 2,
     options: ["Hiç etkilemiyor", "Bazen", "Sık sık", "Her gün"],
+    afterCard: {
+      emoji: "🧠",
+      label: "Araştırma Bulgusu",
+      text: "Haftada 3+ gün yorgun uyanmak, kronik uyku yoksunluğu kategorisine girer. Bu durum uzun vadede kalp hastalığı, obezite ve depresyon riskini ikiye katlıyor.",
+      source: "National Sleep Foundation, Sleep Health Journal (2022)",
+    },
   },
   {
     id: "impactArea",
@@ -267,6 +283,241 @@ const PHASE_TRANSITIONS: Record<number, { from: Phase; to: Phase }> = {
   19: { from: PHASES[4], to: PHASES[5] },
 };
 
+// ─── SVG Company Logos ────────────────────────────────────────────────────────
+function LogoGoogle() {
+  return (
+    <svg viewBox="0 0 18 18" width="18" height="18" fill="none">
+      <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908C16.658 14.017 17.64 11.71 17.64 9.2z" fill="#4285F4"/>
+      <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+      <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+      <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.96L3.964 7.3C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+    </svg>
+  );
+}
+
+function LogoApple() {
+  return (
+    <svg viewBox="0 0 814 1000" width="13" height="16" fill="white">
+      <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-167.2-113.6C142.6 797.8 78.4 666.4 78.4 541.1c0-213.4 139.4-327.1 276.7-327.1 74.3 0 136.2 48.9 183.2 48.9 44.8 0 114.2-52.1 197.9-52.1zm-162.2-71.1c34.8-41.1 59.4-98.5 59.4-155.9 0-7.9-.7-15.8-1.9-22.9-56.8 2.1-124.2 38.1-164.7 85.9-31.4 36.7-61 94.9-61 153.1 0 8.4 1.3 16.9 1.9 19.5 3.2.6 8.4 1.3 13.6 1.3 50.8 0 113.3-33.6 152.7-81z"/>
+    </svg>
+  );
+}
+
+function LogoNike() {
+  return (
+    <svg viewBox="0 0 500 175" width="32" height="11" fill="white">
+      <path d="M496.6 6.6c4.4 5.1 3.2 12.2-2.2 19.6L201.1 168.4c-7.3 5.1-14.6 7.3-21.2 7.3-10.9 0-19.9-6.6-25-19.2L107 55.2c-2.2-5.8-5.1-8-9.5-8-5.8 0-13.9 5.1-25 13.9L3.3 115.5 0 111.4 96 38c11.7-9.5 22.7-14.6 31.5-14.6 10.2 0 18.2 6.6 23.3 19.9l48.4 100.7c2.2 5.1 5.1 7.3 8.8 7.3 3.6 0 8-2.2 13.9-6.6L469.5 2.2c10.2-7.3 20.4-1.5 27 4.4z"/>
+    </svg>
+  );
+}
+
+function LogoGoldman() {
+  return (
+    <svg viewBox="0 0 140 30" width="70" height="15">
+      <text x="0" y="22" fontFamily="Georgia, serif" fontSize="22" fontWeight="700" fill="white" letterSpacing="1">Goldman</text>
+    </svg>
+  );
+}
+
+function LogoAetna() {
+  return (
+    <svg viewBox="0 0 80 30" width="50" height="18">
+      <text x="0" y="22" fontFamily="Arial, sans-serif" fontSize="22" fontWeight="800" fill="#7EC8E3" letterSpacing="0.5">aetna</text>
+    </svg>
+  );
+}
+
+const COMPANY_LOGOS = [
+  { name: "Google",  Logo: LogoGoogle,  bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
+  { name: "Apple",   Logo: LogoApple,   bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
+  { name: "Nike",    Logo: LogoNike,    bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
+  { name: "Goldman", Logo: LogoGoldman, bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
+  { name: "Aetna",   Logo: LogoAetna,   bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
+];
+
+// ─── Age Selection Grid ───────────────────────────────────────────────────────
+const AGE_CARDS = [
+  { label: "18–24", emoji: "🧑‍🎓", bg: "linear-gradient(160deg,#1e1b4b,#3730a3)", accent: "#818CF8" },
+  { label: "25–34", emoji: "👩‍💼", bg: "linear-gradient(160deg,#1e1434,#5b21b6)", accent: "#A78BFA" },
+  { label: "35–44", emoji: "🧔",   bg: "linear-gradient(160deg,#0c1a2e,#0369a1)", accent: "#38BDF8" },
+  { label: "45+",   emoji: "👨‍🦳",  bg: "linear-gradient(160deg,#0f172a,#1e3a5f)", accent: "#7DD3FC" },
+];
+
+function AgeGrid({
+  selected,
+  onSelect,
+}: {
+  selected?: string;
+  onSelect: (v: string) => void;
+}) {
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 12,
+        marginBottom: 32,
+      }}
+    >
+      {AGE_CARDS.map((card) => {
+        const isSelected = selected === card.label;
+        return (
+          <button
+            key={card.label}
+            onClick={() => onSelect(card.label)}
+            style={{
+              background: card.bg,
+              border: `2px solid ${isSelected ? card.accent : "rgba(255,255,255,0.08)"}`,
+              borderRadius: 18,
+              overflow: "hidden",
+              cursor: "pointer",
+              padding: 0,
+              transition: "all 0.2s ease",
+              transform: isSelected ? "scale(1.03)" : "scale(1)",
+              boxShadow: isSelected ? `0 0 20px ${card.accent}40` : "none",
+            }}
+          >
+            {/* Illustration area */}
+            <div
+              style={{
+                height: 110,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 56,
+                position: "relative",
+              }}
+            >
+              {card.emoji}
+              {isSelected && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 10,
+                    width: 22,
+                    height: 22,
+                    borderRadius: "50%",
+                    background: card.accent,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 12,
+                    color: "#0A0E1A",
+                    fontWeight: 800,
+                  }}
+                >
+                  ✓
+                </div>
+              )}
+            </div>
+            {/* Label strip */}
+            <div
+              style={{
+                background: isSelected ? card.accent : "rgba(255,255,255,0.08)",
+                padding: "10px 0",
+                fontSize: 14,
+                fontWeight: 700,
+                color: isSelected ? "#0A0E1A" : "#CBD5E1",
+                textAlign: "center",
+                transition: "all 0.2s ease",
+              }}
+            >
+              Yaş: {card.label}
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Interstitial (mid-flow) Card ────────────────────────────────────────────
+function InterstitialScreen({
+  card,
+  onContinue,
+}: {
+  card: InterstitialCard;
+  onContinue: () => void;
+}) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "#0A0E1A",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "32px 24px",
+        zIndex: 100,
+        animation: "fadeInUp 0.35s ease forwards",
+      }}
+    >
+      <div style={{ width: "100%", maxWidth: 400 }}>
+        <div
+          style={{
+            fontSize: 52,
+            textAlign: "center",
+            marginBottom: 20,
+          }}
+        >
+          {card.emoji}
+        </div>
+        <p
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: "#7C3AED",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            textAlign: "center",
+            margin: "0 0 20px",
+          }}
+        >
+          {card.label}
+        </p>
+        <div
+          style={{
+            background: "rgba(124,58,237,0.08)",
+            border: "1px solid rgba(124,58,237,0.2)",
+            borderRadius: 18,
+            padding: "24px 22px",
+            marginBottom: 28,
+          }}
+        >
+          <p
+            style={{
+              fontSize: 16,
+              color: "#E2E8F0",
+              lineHeight: 1.7,
+              margin: "0 0 16px",
+              textAlign: "center",
+            }}
+          >
+            {card.text}
+          </p>
+          <p
+            style={{
+              fontSize: 12,
+              color: "#475569",
+              fontStyle: "italic",
+              textAlign: "center",
+              margin: 0,
+            }}
+          >
+            {card.source}
+          </p>
+        </div>
+        <button className="btn-primary" style={{ fontSize: 16 }} onClick={onContinue}>
+          Anladım, Devam Et →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Phase Transition Screen ──────────────────────────────────────────────────
 const INSIGHT_LABELS: Record<Insight["type"], string> = {
   quote: "💬 Alıntı",
@@ -280,19 +531,6 @@ function TestimonialCard({ t }: { t: Testimonial }) {
       {/* Headline */}
       <p
         style={{
-          fontSize: 11,
-          fontWeight: 700,
-          color: "#7C3AED",
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
-          textAlign: "center",
-          margin: "0 0 14px",
-        }}
-      >
-        🏢 Kurumsal Onay
-      </p>
-      <p
-        style={{
           fontSize: 13,
           color: "#94A3B8",
           textAlign: "center",
@@ -303,7 +541,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
         {t.headline}
       </p>
 
-      {/* Company badges */}
+      {/* Real company logos */}
       <div
         style={{
           display: "flex",
@@ -313,53 +551,29 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           marginBottom: 20,
         }}
       >
-        {t.companies.map((c) => (
+        {COMPANY_LOGOS.map(({ name, Logo, bg, border }) => (
           <div
-            key={c.name}
+            key={name}
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 6,
-              background: c.bg,
-              border: `1px solid ${c.color}33`,
-              borderRadius: 20,
-              padding: "5px 12px",
+              justifyContent: "center",
+              background: bg,
+              border: `1px solid ${border}`,
+              borderRadius: 10,
+              padding: "7px 14px",
+              height: 36,
             }}
           >
-            <span
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: "50%",
-                background: c.color,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 9,
-                fontWeight: 800,
-                color: "#fff",
-                flexShrink: 0,
-              }}
-            >
-              {c.initial}
-            </span>
-            <span style={{ fontSize: 12, fontWeight: 600, color: "#CBD5E1" }}>
-              {c.name}
-            </span>
+            <Logo />
           </div>
         ))}
       </div>
 
       {/* Divider */}
-      <div
-        style={{
-          height: 1,
-          background: "rgba(124,58,237,0.15)",
-          marginBottom: 16,
-        }}
-      />
+      <div style={{ height: 1, background: "rgba(124,58,237,0.15)", marginBottom: 16 }} />
 
-      {/* Personal testimonial */}
+      {/* Personal testimonial with real photo */}
       <div
         style={{
           background: "rgba(124,58,237,0.06)",
@@ -372,20 +586,30 @@ function TestimonialCard({ t }: { t: Testimonial }) {
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
           <div
             style={{
-              width: 40,
-              height: 40,
+              width: 48,
+              height: 48,
               borderRadius: "50%",
+              border: `2px solid ${t.avatarColor}`,
+              overflow: "hidden",
+              flexShrink: 0,
               background: t.avatarColor,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 13,
-              fontWeight: 800,
-              color: "#fff",
-              flexShrink: 0,
             }}
           >
-            {t.initials}
+            <img
+              src={t.photoUrl}
+              alt={t.person}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+                (e.currentTarget.parentElement as HTMLElement).innerText = t.initials;
+                Object.assign((e.currentTarget.parentElement as HTMLElement).style, {
+                  fontSize: "14px", fontWeight: "800", color: "#fff",
+                });
+              }}
+            />
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#F8FAFC" }}>{t.person}</div>
@@ -523,6 +747,37 @@ function PhaseTransition({
             >
               {INSIGHT_LABELS[phase.insight.type]}
             </span>
+            {/* Researcher portrait */}
+            {phase.insight.researcher && (
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    background: `linear-gradient(135deg, ${phase.insight.researcher.color}, ${phase.insight.researcher.color}88)`,
+                    border: `2px solid ${phase.insight.researcher.color}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    color: "#fff",
+                    flexShrink: 0,
+                  }}
+                >
+                  {phase.insight.researcher.initials}
+                </div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#E2E8F0" }}>
+                    {phase.insight.researcher.name}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#64748B" }}>
+                    {phase.insight.researcher.institution}
+                  </div>
+                </div>
+              </div>
+            )}
             <p
               style={{
                 fontSize: 15,
@@ -563,14 +818,40 @@ export default function QuizPage() {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
   const [showTransition, setShowTransition] = useState<Phase | null>(null);
+  const [showInterstitial, setShowInterstitial] = useState<InterstitialCard | null>(null);
+  const [pendingNextIndex, setPendingNextIndex] = useState<number | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const question = QUESTIONS[currentQ];
   const progress = (currentQ / QUESTIONS.length) * 100;
   const currentAnswer = answers[question.id];
 
+  function advanceTo(nextIndex: number, updatedAnswers: Partial<QuizAnswers>) {
+    if (nextIndex >= QUESTIONS.length) {
+      localStorage.setItem("sleepiq_answers", JSON.stringify(updatedAnswers));
+      router.push("/results");
+      return;
+    }
+    if (PHASE_TRANSITIONS[nextIndex]) {
+      setCurrentQ(nextIndex);
+      setShowTransition(PHASE_TRANSITIONS[nextIndex].to);
+      setIsTransitioning(false);
+      return;
+    }
+    setCurrentQ(nextIndex);
+    setIsTransitioning(false);
+  }
+
   function handleAnswer(value: string) {
-    setAnswers((prev) => ({ ...prev, [question.id]: value }));
+    const updated = { ...answers, [question.id]: value };
+    setAnswers(updated);
+
+    // Auto-advance for age question
+    if (question.autoAdvance) {
+      const nextIndex = currentQ + 1;
+      setIsTransitioning(true);
+      setTimeout(() => advanceTo(nextIndex, updated), 250);
+    }
   }
 
   function handleBack() {
@@ -590,29 +871,32 @@ export default function QuizPage() {
 
     const nextIndex = currentQ + 1;
 
-    // Check if next question starts a new phase
-    if (nextIndex < QUESTIONS.length && PHASE_TRANSITIONS[nextIndex]) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentQ(nextIndex);
-        setShowTransition(PHASE_TRANSITIONS[nextIndex].to);
-        setIsTransitioning(false);
-      }, 200);
+    // Show interstitial card if present
+    if (question.afterCard) {
+      setPendingNextIndex(nextIndex);
+      setShowInterstitial(question.afterCard);
       return;
     }
 
     setIsTransitioning(true);
-    setTimeout(() => {
-      if (nextIndex >= QUESTIONS.length) {
-        // Done — save and navigate
-        const finalAnswers = answers as QuizAnswers;
-        localStorage.setItem("sleepiq_answers", JSON.stringify(finalAnswers));
-        router.push("/results");
-      } else {
-        setCurrentQ(nextIndex);
-        setIsTransitioning(false);
-      }
-    }, 200);
+    setTimeout(() => advanceTo(nextIndex, answers), 200);
+  }
+
+  function handleInterstitialContinue() {
+    const nextIndex = pendingNextIndex!;
+    setShowInterstitial(null);
+    setPendingNextIndex(null);
+    setIsTransitioning(true);
+    setTimeout(() => advanceTo(nextIndex, answers), 200);
+  }
+
+  if (showInterstitial) {
+    return (
+      <InterstitialScreen
+        card={showInterstitial}
+        onContinue={handleInterstitialContinue}
+      />
+    );
   }
 
   if (showTransition) {
@@ -779,77 +1063,83 @@ export default function QuizPage() {
           )}
           {!question.subtext && <div style={{ marginBottom: 24 }} />}
 
-          {/* Options */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-              marginBottom: 32,
-            }}
-          >
-            {question.options.map((opt, i) => {
-              const selected = currentAnswer === opt;
-              return (
-                <button
-                  key={opt}
-                  onClick={() => handleAnswer(opt)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 14,
-                    padding: "16px 18px",
-                    borderRadius: 14,
-                    border: `1px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
-                    background: selected
-                      ? "rgba(124, 58, 237, 0.15)"
-                      : "rgba(255,255,255,0.03)",
-                    color: selected ? "#A78BFA" : "#CBD5E1",
-                    fontSize: 15,
-                    fontWeight: selected ? 600 : 400,
-                    textAlign: "left",
-                    cursor: "pointer",
-                    transition: "all 0.15s ease",
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 22,
-                      height: 22,
-                      borderRadius: "50%",
-                      border: `2px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.2)"}`,
-                      background: selected ? "#7C3AED" : "transparent",
-                      flexShrink: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 11,
-                      color: "white",
-                      transition: "all 0.15s ease",
-                    }}
-                  >
-                    {selected ? "✓" : ""}
-                  </span>
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
+          {/* Options — age question gets special grid */}
+          {question.id === "ageSegment" ? (
+            <AgeGrid selected={currentAnswer} onSelect={handleAnswer} />
+          ) : (
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 10,
+                  marginBottom: 32,
+                }}
+              >
+                {question.options.map((opt) => {
+                  const selected = currentAnswer === opt;
+                  return (
+                    <button
+                      key={opt}
+                      onClick={() => handleAnswer(opt)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 14,
+                        padding: "16px 18px",
+                        borderRadius: 14,
+                        border: `1px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+                        background: selected
+                          ? "rgba(124, 58, 237, 0.15)"
+                          : "rgba(255,255,255,0.03)",
+                        color: selected ? "#A78BFA" : "#CBD5E1",
+                        fontSize: 15,
+                        fontWeight: selected ? 600 : 400,
+                        textAlign: "left",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 22,
+                          height: 22,
+                          borderRadius: "50%",
+                          border: `2px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.2)"}`,
+                          background: selected ? "#7C3AED" : "transparent",
+                          flexShrink: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 11,
+                          color: "white",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        {selected ? "✓" : ""}
+                      </span>
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
 
-          {/* Next */}
-          <button
-            className="btn-primary"
-            onClick={handleNext}
-            disabled={!currentAnswer}
-            style={{
-              opacity: currentAnswer ? 1 : 0.4,
-              cursor: currentAnswer ? "pointer" : "not-allowed",
-            }}
-          >
-            {currentQ < QUESTIONS.length - 1
-              ? "Devam Et →"
-              : "Sonuçlarımı Göster →"}
-          </button>
+              {/* Next */}
+              <button
+                className="btn-primary"
+                onClick={handleNext}
+                disabled={!currentAnswer}
+                style={{
+                  opacity: currentAnswer ? 1 : 0.4,
+                  cursor: currentAnswer ? "pointer" : "not-allowed",
+                }}
+              >
+                {currentQ < QUESTIONS.length - 1
+                  ? "Devam Et →"
+                  : "Sonuçlarımı Göster →"}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </main>
