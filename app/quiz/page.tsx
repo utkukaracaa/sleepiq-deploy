@@ -5,20 +5,72 @@ import { useRouter } from "next/navigation";
 import { QuizAnswers } from "@/lib/sleepLogic";
 
 // ─── Phase definitions ────────────────────────────────────────────────────────
+interface Insight {
+  type: "quote" | "fact" | "book";
+  text: string;
+  source: string;
+}
+
 interface Phase {
   id: number;
   emoji: string;
   title: string;
   subtitle: string;
+  insight?: Insight;
 }
 
 const PHASES: Phase[] = [
   { id: 0, emoji: "📋", title: "Hızlı bir soru", subtitle: "Seni tanıyalım" },
-  { id: 1, emoji: "😴", title: "Uyku Temeliniz", subtitle: "Şu anki durumunu anlıyoruz" },
-  { id: 2, emoji: "🔍", title: "Problemi Derinleştiriyoruz", subtitle: "Gerçek nedeni buluyoruz" },
-  { id: 3, emoji: "🎯", title: "Kimliğin & Hedeflerin", subtitle: "Seni neyin motive ettiğini anlıyoruz" },
-  { id: 4, emoji: "💪", title: "Kararlılık", subtitle: "Hazır olup olmadığını ölçüyoruz" },
-  { id: 5, emoji: "⚠️", title: "Risk Değerlendirmesi", subtitle: "Son 2 soru" },
+  {
+    id: 1,
+    emoji: "😴",
+    title: "Uyku Temeliniz",
+    subtitle: "Şu anki durumunu anlıyoruz",
+  },
+  {
+    id: 2,
+    emoji: "🔍",
+    title: "Problemi Derinleştiriyoruz",
+    subtitle: "Gerçek nedeni buluyoruz",
+    insight: {
+      type: "fact",
+      text: "6 saatten az uyuyan birinin bilişsel performansı, 10 gün içinde tamamen uykusuz kalmakla eşdeğer hale gelir — ama kişi bunu fark etmez.",
+      source: "Van Dongen et al., University of Pennsylvania (2003)",
+    },
+  },
+  {
+    id: 3,
+    emoji: "🎯",
+    title: "Kimliğin & Hedeflerin",
+    subtitle: "Seni neyin motive ettiğini anlıyoruz",
+    insight: {
+      type: "quote",
+      text: "\"Uyku önceliğimin bir göstergesidir. Yorgunken iyi kararlar veremiyorum, iyi düşünemiyorum. Uyku benim için müzakere edilemez.\"",
+      source: "Jeff Bezos — Amazon Kurucusu",
+    },
+  },
+  {
+    id: 4,
+    emoji: "💪",
+    title: "Kararlılık",
+    subtitle: "Hazır olup olmadığını ölçüyoruz",
+    insight: {
+      type: "book",
+      text: "Matthew Walker'ın 'Why We Sleep' kitabına göre uyku süresi 6'dan 8 saate çıktığında öğrenme kapasitesi %40 artıyor ve duygusal tepkisellik dramatik biçimde düşüyor.",
+      source: "Why We Sleep — Matthew Walker (2017)",
+    },
+  },
+  {
+    id: 5,
+    emoji: "⚠️",
+    title: "Risk Değerlendirmesi",
+    subtitle: "Son 2 soru",
+    insight: {
+      type: "fact",
+      text: "Kronik uyku eksikliği bağışıklık sistemini %70'e kadar zayıflatır. CDC, uyku yoksunluğunu resmi olarak halk sağlığı krizi ilan etmiştir.",
+      source: "CDC — Centers for Disease Control and Prevention",
+    },
+  },
 ];
 
 // ─── Question definitions ─────────────────────────────────────────────────────
@@ -184,6 +236,12 @@ const PHASE_TRANSITIONS: Record<number, { from: Phase; to: Phase }> = {
 };
 
 // ─── Phase Transition Screen ──────────────────────────────────────────────────
+const INSIGHT_LABELS: Record<Insight["type"], string> = {
+  quote: "💬 Alıntı",
+  fact: "🔬 Bilimsel Gerçek",
+  book: "📖 Kitaptan",
+};
+
 function PhaseTransition({
   phase,
   onContinue,
@@ -201,55 +259,107 @@ function PhaseTransition({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: 32,
+        padding: "32px 24px",
         zIndex: 100,
         animation: "fadeInUp 0.4s ease forwards",
       }}
     >
-      <div
-        style={{
-          width: 72,
-          height: 72,
-          borderRadius: 20,
-          background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(99,102,241,0.3))",
-          border: "1px solid rgba(124,58,237,0.4)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 36,
-          marginBottom: 24,
-        }}
-      >
-        {phase.emoji}
+      <div style={{ width: "100%", maxWidth: 400 }}>
+        {/* Phase header */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: phase.insight ? 32 : 40 }}>
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 20,
+              background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(99,102,241,0.3))",
+              border: "1px solid rgba(124,58,237,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 36,
+              marginBottom: 20,
+            }}
+          >
+            {phase.emoji}
+          </div>
+          <h2
+            style={{
+              fontSize: 26,
+              fontWeight: 800,
+              color: "#F8FAFC",
+              margin: "0 0 8px",
+              textAlign: "center",
+            }}
+          >
+            {phase.title}
+          </h2>
+          <p
+            style={{
+              fontSize: 15,
+              color: "#64748B",
+              margin: 0,
+              textAlign: "center",
+            }}
+          >
+            {phase.subtitle}
+          </p>
+        </div>
+
+        {/* Insight card */}
+        {phase.insight && (
+          <div
+            style={{
+              background: "rgba(124,58,237,0.08)",
+              border: "1px solid rgba(124,58,237,0.2)",
+              borderRadius: 16,
+              padding: "20px 22px",
+              marginBottom: 32,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: "#7C3AED",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                display: "block",
+                marginBottom: 12,
+              }}
+            >
+              {INSIGHT_LABELS[phase.insight.type]}
+            </span>
+            <p
+              style={{
+                fontSize: 15,
+                color: "#CBD5E1",
+                lineHeight: 1.65,
+                margin: "0 0 12px",
+              }}
+            >
+              {phase.insight.text}
+            </p>
+            <span
+              style={{
+                fontSize: 12,
+                color: "#475569",
+                fontStyle: "italic",
+              }}
+            >
+              {phase.insight.source}
+            </span>
+          </div>
+        )}
+
+        <button
+          className="btn-primary"
+          style={{ fontSize: 16 }}
+          onClick={onContinue}
+        >
+          Devam Et →
+        </button>
       </div>
-      <h2
-        style={{
-          fontSize: 26,
-          fontWeight: 800,
-          color: "#F8FAFC",
-          margin: "0 0 8px",
-          textAlign: "center",
-        }}
-      >
-        {phase.title}
-      </h2>
-      <p
-        style={{
-          fontSize: 15,
-          color: "#64748B",
-          margin: "0 0 40px",
-          textAlign: "center",
-        }}
-      >
-        {phase.subtitle}
-      </p>
-      <button
-        className="btn-primary"
-        style={{ maxWidth: 280, fontSize: 16 }}
-        onClick={onContinue}
-      >
-        Devam Et →
-      </button>
     </div>
   );
 }
