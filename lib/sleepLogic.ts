@@ -26,6 +26,10 @@ export interface QuizAnswers {
   // Phase 5 — Loss Aversion
   wouldLose: string;
   biggestFear: string;
+  // Book engagement (optional)
+  readWalker?: string;
+  readHuffington?: string;
+  bookInterest?: string;
 }
 
 export type SleepType =

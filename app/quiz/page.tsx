@@ -107,6 +107,19 @@ interface InterstitialCard {
   source: string;
 }
 
+interface BookDef {
+  title: string;
+  titleLines: string[];
+  subtitle: string;
+  author: string;
+  publisher: string;
+  bg: string;
+  titleColor: string | string[];
+  authorColor: string;
+  accentColor: string;
+  tagline?: string;
+}
+
 interface Question {
   id: keyof QuizAnswers;
   question: string;
@@ -115,7 +128,49 @@ interface Question {
   phase: number;
   autoAdvance?: boolean;
   afterCard?: InterstitialCard;
+  type?: "standard" | "bookCheck" | "bookMultiSelect";
+  book?: BookDef;
+  books?: BookDef[];
 }
+
+// ─── Book definitions ─────────────────────────────────────────────────────────
+const BOOK_WALKER: BookDef = {
+  title: "Niçin Uyuruz?",
+  titleLines: ["Niçin", "Uyuruz?"],
+  subtitle: "Yeni Uyku ve Rüya Bilimi",
+  author: "MATTHEW WALKER",
+  publisher: "PEGASUS",
+  bg: "#F4EFE6",
+  titleColor: "#1A1A2E",
+  authorColor: "#6B21A8",
+  accentColor: "#B87333",
+  tagline: "Uluslararası Çoksatan",
+};
+
+const BOOK_HUFFINGTON: BookDef = {
+  title: "Uyku Devrimi",
+  titleLines: ["UYKU", "DEVRİMİ"],
+  subtitle: "Hayatınızı Her Gece Değiştirin",
+  author: "ARIANNA HUFFINGTON",
+  publisher: "DK",
+  bg: "linear-gradient(180deg,#091525 0%,#122040 100%)",
+  titleColor: "#FFFFFF",
+  authorColor: "#FFFFFF",
+  accentColor: "#5B9BD5",
+  tagline: "Araştırma & İnceleme",
+};
+
+const BOOK_WINTER: BookDef = {
+  title: "Uykunun Şifalı Gücü",
+  titleLines: ["UYKUNUN", "ŞİFALI", "GÜCÜ"],
+  subtitle: "Uykunuz neden bozulur ve nasıl düzelir?",
+  author: "W. CHRIS WINTER",
+  publisher: "KETEBE",
+  bg: "#0D1B2A",
+  titleColor: ["#FFFFFF", "#22D3EE", "#FCD34D"],
+  authorColor: "#FFFFFF",
+  accentColor: "#22D3EE",
+};
 
 const QUESTIONS: Question[] = [
   // Q0 — Segmentation
@@ -152,6 +207,14 @@ const QUESTIONS: Question[] = [
     options: ["Hiç", "1 kez", "2–3 kez", "Çok sık"],
   },
   {
+    id: "readWalker",
+    question: "Bu kitabı okudun mu?",
+    phase: 1,
+    options: ["Evet, okudum", "Hayır, okumadım", "Duymamıştım"],
+    type: "bookCheck",
+    book: BOOK_WALKER,
+  },
+  {
     id: "sleepQuality",
     question: "Genel olarak uykunu nasıl değerlendirirsin?",
     phase: 1,
@@ -177,6 +240,14 @@ const QUESTIONS: Question[] = [
     options: ["Enerjim", "Odaklanmam", "Ruh halim", "Hepsi"],
   },
   {
+    id: "readHuffington",
+    question: "Bu kitabı okudun mu?",
+    phase: 2,
+    options: ["Evet, okudum", "Hayır, okumadım", "Duymamıştım"],
+    type: "bookCheck",
+    book: BOOK_HUFFINGTON,
+  },
+  {
     id: "caffeine",
     question: "Gün içinde kafein tüketiminiz?",
     subtext: "Kahve, çay, enerji içeceği dahil.",
@@ -188,6 +259,15 @@ const QUESTIONS: Question[] = [
     question: "Gün içinde kendini \"boş pil\" gibi hissediyor musun?",
     phase: 2,
     options: ["Nadiren", "Bazen", "Sık sık", "Her gün"],
+  },
+  {
+    id: "bookInterest",
+    question: "Aşağıdaki kitaplardan hangisi seni en çok ilgilendiriyor?",
+    subtext: "Birden fazla seçebilirsin",
+    phase: 2,
+    options: [BOOK_WALKER.title, BOOK_HUFFINGTON.title, BOOK_WINTER.title],
+    type: "bookMultiSelect",
+    books: [BOOK_WALKER, BOOK_HUFFINGTON, BOOK_WINTER],
   },
   {
     id: "afternoonCrash",
@@ -277,10 +357,10 @@ const QUESTIONS: Question[] = [
 ];
 
 const PHASE_TRANSITIONS: Record<number, { from: Phase; to: Phase }> = {
-  5: { from: PHASES[1], to: PHASES[2] },
-  10: { from: PHASES[2], to: PHASES[3] },
-  15: { from: PHASES[3], to: PHASES[4] },
-  19: { from: PHASES[4], to: PHASES[5] },
+  6:  { from: PHASES[1], to: PHASES[2] },
+  13: { from: PHASES[2], to: PHASES[3] },
+  18: { from: PHASES[3], to: PHASES[4] },
+  22: { from: PHASES[4], to: PHASES[5] },
 };
 
 // ─── SVG Company Logos ────────────────────────────────────────────────────────
@@ -514,6 +594,226 @@ function InterstitialScreen({
           Anladım, Devam Et →
         </button>
       </div>
+    </div>
+  );
+}
+
+// ─── Book Cover Art (CSS-rendered) ───────────────────────────────────────────
+function BookCoverArt({ book, small }: { book: BookDef; small?: boolean }) {
+  const h = small ? 140 : 200;
+  const w = small ? 95 : 136;
+  const isLight = typeof book.bg === "string" && book.bg.startsWith("#F");
+
+  return (
+    <div
+      style={{
+        width: w,
+        height: h,
+        background: book.bg,
+        borderRadius: small ? 8 : 10,
+        padding: small ? "10px 8px" : "14px 12px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        flexShrink: 0,
+        boxShadow: "4px 6px 20px rgba(0,0,0,0.5)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Tagline */}
+      {book.tagline && (
+        <div style={{ fontSize: small ? 7 : 9, color: isLight ? "#555" : "#aaa", marginBottom: 4 }}>
+          {book.tagline}
+        </div>
+      )}
+      {/* Author */}
+      <div
+        style={{
+          fontSize: small ? 7 : 9,
+          fontWeight: 800,
+          color: typeof book.authorColor === "string" ? book.authorColor : "#fff",
+          letterSpacing: "0.06em",
+          marginBottom: small ? 2 : 4,
+        }}
+      >
+        {book.author}
+      </div>
+      {/* Title lines */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        {book.titleLines.map((line, i) => (
+          <div
+            key={i}
+            style={{
+              fontSize: small ? (book.titleLines.length > 2 ? 13 : 15) : (book.titleLines.length > 2 ? 18 : 22),
+              fontWeight: 900,
+              lineHeight: 1.1,
+              color: Array.isArray(book.titleColor) ? book.titleColor[i] ?? "#fff" : book.titleColor,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {line}
+          </div>
+        ))}
+      </div>
+      {/* Subtitle */}
+      <div
+        style={{
+          fontSize: small ? 6 : 8,
+          color: isLight ? "#666" : "rgba(255,255,255,0.5)",
+          lineHeight: 1.3,
+          marginTop: 4,
+        }}
+      >
+        {book.subtitle}
+      </div>
+      {/* Publisher */}
+      <div
+        style={{
+          fontSize: small ? 7 : 9,
+          fontWeight: 700,
+          color: book.accentColor,
+          marginTop: small ? 4 : 6,
+          letterSpacing: "0.1em",
+        }}
+      >
+        {book.publisher}
+      </div>
+    </div>
+  );
+}
+
+// ─── Book Check Question ──────────────────────────────────────────────────────
+function BookCheckQuestion({
+  question,
+  selected,
+  onSelect,
+}: {
+  question: Question;
+  selected?: string;
+  onSelect: (v: string) => void;
+}) {
+  const book = question.book!;
+  return (
+    <div>
+      {/* Book display */}
+      <div
+        style={{
+          display: "flex",
+          gap: 20,
+          alignItems: "flex-start",
+          marginBottom: 28,
+          padding: "20px",
+          background: "rgba(255,255,255,0.03)",
+          borderRadius: 16,
+          border: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <BookCoverArt book={book} />
+        <div style={{ flex: 1, paddingTop: 4 }}>
+          <div style={{ fontSize: 11, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+            📚 Uyku Kitaplığı
+          </div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#F8FAFC", lineHeight: 1.2, marginBottom: 6 }}>
+            {book.title}
+          </div>
+          <div style={{ fontSize: 12, color: "#64748B", marginBottom: 4 }}>{book.author}</div>
+          <div style={{ fontSize: 11, color: "#475569" }}>{book.subtitle}</div>
+        </div>
+      </div>
+      {/* Yes / No options */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
+        {question.options.map((opt) => {
+          const sel = selected === opt;
+          return (
+            <button
+              key={opt}
+              onClick={() => onSelect(opt)}
+              style={{
+                padding: "15px 18px",
+                borderRadius: 13,
+                border: `1px solid ${sel ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+                background: sel ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.03)",
+                color: sel ? "#A78BFA" : "#CBD5E1",
+                fontSize: 15,
+                fontWeight: sel ? 600 : 400,
+                textAlign: "left",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                transition: "all 0.15s ease",
+              }}
+            >
+              <span style={{
+                width: 22, height: 22, borderRadius: "50%",
+                border: `2px solid ${sel ? "#7C3AED" : "rgba(255,255,255,0.2)"}`,
+                background: sel ? "#7C3AED" : "transparent",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 11, color: "white", flexShrink: 0,
+              }}>
+                {sel ? "✓" : ""}
+              </span>
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Book Multi-Select ────────────────────────────────────────────────────────
+function BookMultiSelect({
+  books,
+  selected,
+  onToggle,
+}: {
+  books: BookDef[];
+  selected: string[];
+  onToggle: (title: string) => void;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+      {books.map((book) => {
+        const sel = selected.includes(book.title);
+        return (
+          <button
+            key={book.title}
+            onClick={() => onToggle(book.title)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              padding: "14px 16px",
+              borderRadius: 14,
+              border: `1.5px solid ${sel ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+              background: sel ? "rgba(124,58,237,0.1)" : "rgba(255,255,255,0.02)",
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+              textAlign: "left",
+            }}
+          >
+            <BookCoverArt book={book} small />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: sel ? "#A78BFA" : "#E2E8F0", marginBottom: 4 }}>
+                {book.title}
+              </div>
+              <div style={{ fontSize: 12, color: "#64748B", marginBottom: 3 }}>{book.author}</div>
+              <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.4 }}>{book.subtitle}</div>
+            </div>
+            <div style={{
+              width: 26, height: 26, borderRadius: 6, flexShrink: 0,
+              border: `2px solid ${sel ? "#7C3AED" : "rgba(255,255,255,0.15)"}`,
+              background: sel ? "#7C3AED" : "transparent",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 13, color: "white", transition: "all 0.15s ease",
+            }}>
+              {sel ? "✓" : ""}
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -867,7 +1167,9 @@ export default function QuizPage() {
   }
 
   function handleNext() {
-    if (!currentAnswer) return;
+    const isMultiSelect = question.type === "bookMultiSelect";
+    if (!isMultiSelect && !currentAnswer) return;
+    if (isMultiSelect && multiSelected.length === 0) return;
 
     const nextIndex = currentQ + 1;
 
@@ -889,6 +1191,16 @@ export default function QuizPage() {
     setIsTransitioning(true);
     setTimeout(() => advanceTo(nextIndex, answers), 200);
   }
+
+  function handleMultiToggle(title: string) {
+    const current = (answers.bookInterest ?? "").split(",").filter(Boolean);
+    const next = current.includes(title)
+      ? current.filter((t) => t !== title)
+      : [...current, title];
+    setAnswers((prev) => ({ ...prev, bookInterest: next.join(",") }));
+  }
+
+  const multiSelected = (answers.bookInterest ?? "").split(",").filter(Boolean);
 
   if (showInterstitial) {
     return (
@@ -1063,9 +1375,33 @@ export default function QuizPage() {
           )}
           {!question.subtext && <div style={{ marginBottom: 24 }} />}
 
-          {/* Options — age question gets special grid */}
+          {/* Options — special rendering by question type */}
           {question.id === "ageSegment" ? (
             <AgeGrid selected={currentAnswer} onSelect={handleAnswer} />
+          ) : question.type === "bookCheck" ? (
+            <>
+              <BookCheckQuestion question={question} selected={currentAnswer} onSelect={handleAnswer} />
+              <button
+                className="btn-primary"
+                onClick={handleNext}
+                disabled={!currentAnswer}
+                style={{ opacity: currentAnswer ? 1 : 0.4, cursor: currentAnswer ? "pointer" : "not-allowed" }}
+              >
+                Devam Et →
+              </button>
+            </>
+          ) : question.type === "bookMultiSelect" ? (
+            <>
+              <BookMultiSelect books={question.books!} selected={multiSelected} onToggle={handleMultiToggle} />
+              <button
+                className="btn-primary"
+                onClick={handleNext}
+                disabled={multiSelected.length === 0}
+                style={{ opacity: multiSelected.length > 0 ? 1 : 0.4, cursor: multiSelected.length > 0 ? "pointer" : "not-allowed" }}
+              >
+                Devam Et →
+              </button>
+            </>
           ) : (
             <>
               <div
