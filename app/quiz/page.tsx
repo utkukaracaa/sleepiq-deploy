@@ -55,6 +55,7 @@ const PHASES: Phase[] = [
         name: "Hans Van Dongen",
         institution: "University of Pennsylvania",
         color: "#0891B2",
+        img: "/hans-van-dongen.jpg",
       },
     },
   },
