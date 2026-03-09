@@ -9,7 +9,7 @@ interface Insight {
   type: "quote" | "fact" | "book";
   text: string;
   source: string;
-  researcher?: { initials: string; name: string; institution: string; color: string };
+  researcher?: { initials: string; name: string; institution: string; color: string; img?: string };
 }
 
 interface Testimonial {
@@ -84,6 +84,7 @@ const PHASES: Phase[] = [
       type: "book",
       text: "Matthew Walker'ın 'Why We Sleep' kitabına göre uyku süresi 6'dan 8 saate çıktığında öğrenme kapasitesi %40 artıyor ve duygusal tepkisellik dramatik biçimde düşüyor.",
       source: "Why We Sleep — Matthew Walker (2017)",
+      researcher: { initials: "MW", name: "Matthew Walker", institution: "UC Berkeley — Uyku Bilimci", color: "#7C3AED", img: "/matthew-walker.jpg" },
     },
   },
   {
@@ -105,6 +106,7 @@ interface InterstitialCard {
   label: string;
   text: string;
   source: string;
+  authorImg?: string;
 }
 
 interface BookDef {
@@ -118,6 +120,7 @@ interface BookDef {
   authorColor: string;
   accentColor: string;
   tagline?: string;
+  authorImg?: string;
 }
 
 interface Question {
@@ -145,6 +148,7 @@ const BOOK_WALKER: BookDef = {
   authorColor: "#6B21A8",
   accentColor: "#B87333",
   tagline: "Uluslararası Çoksatan",
+  authorImg: "/matthew-walker.jpg",
 };
 
 const BOOK_HUFFINGTON: BookDef = {
@@ -192,6 +196,7 @@ const QUESTIONS: Question[] = [
       label: "Biliyor Muydun?",
       text: "Öğrenmeden önce uyumak beyni kuru bir sünger gibi hazırlar. Yeni bilgileri kaydetme kapasitesi uykusuz beyinde %40 oranında düşer.",
       source: "Matthew Walker, Why We Sleep",
+      authorImg: "/matthew-walker.jpg",
     },
   },
   {
@@ -204,6 +209,7 @@ const QUESTIONS: Question[] = [
       label: "Biliyor muydun?",
       text: "Uykuya dalmak 20 dakikadan uzun sürüyorsa buna \"uyku gecikmesi\" denir ve bu başlı başına bir uyku bozukluğu işaretidir. İdeal süre 7–15 dakikadır.",
       source: "American Academy of Sleep Medicine",
+      authorImg: "/aasm-logo.png",
     },
   },
   {
@@ -236,6 +242,7 @@ const QUESTIONS: Question[] = [
       label: "Biliyor Muydun?",
       text: "Uyku eksikliği erkekleri 10 yaş yaşlandırır. Düzenli olarak 4–5 saat uyuyan erkeklerin testosteron seviyesi, 10 yaş büyük bir erkekle birebir aynıdır.",
       source: "Matthew Walker, Why We Sleep",
+      authorImg: "/matthew-walker.jpg",
     },
   },
   // Phase 2 — Problem Deepening
@@ -309,6 +316,7 @@ const QUESTIONS: Question[] = [
       label: "Biliyor Muydun?",
       text: "Uyku eksikliği duygusal merkezinizi (amigdala) %60 daha tepkisel ve öfkeli hale getirir; mantıklı kararlar alan prefrontal korteks ise neredeyse devre dışı kalır.",
       source: "Matthew Walker, Why We Sleep",
+      authorImg: "/matthew-walker.jpg",
     },
   },
   // Phase 3 — Identity & Aspiration
@@ -600,17 +608,30 @@ function InterstitialScreen({
         >
           {card.text}
         </p>
-        <p
-          style={{
-            fontSize: 12,
-            color: "#475569",
-            fontStyle: "italic",
-            textAlign: "center",
-            margin: 0,
-          }}
-        >
-          {card.source}
-        </p>
+        {card.authorImg ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
+            {card.authorImg.includes("logo") ? (
+              <img
+                src={card.authorImg}
+                alt="Kaynak"
+                style={{ height: 22, maxWidth: 80, objectFit: "contain", opacity: 0.75, flexShrink: 0 }}
+              />
+            ) : (
+              <img
+                src={card.authorImg}
+                alt="Yazar"
+                style={{ width: 34, height: 34, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(124,58,237,0.4)", flexShrink: 0 }}
+              />
+            )}
+            <p style={{ fontSize: 12, color: "#64748B", fontStyle: "italic", margin: 0, textAlign: "left" }}>
+              {card.source}
+            </p>
+          </div>
+        ) : (
+          <p style={{ fontSize: 12, color: "#475569", fontStyle: "italic", textAlign: "center", margin: 0 }}>
+            {card.source}
+          </p>
+        )}
       </div>
       <button className="btn-primary" style={{ fontSize: 16 }} onClick={onContinue}>
         Anladım, Devam Et →
@@ -735,10 +756,15 @@ function BookCheckQuestion({
           <div style={{ fontSize: 11, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
             📚 Uyku Kitaplığı
           </div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#F8FAFC", lineHeight: 1.2, marginBottom: 6 }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#F8FAFC", lineHeight: 1.2, marginBottom: 8 }}>
             {book.title}
           </div>
-          <div style={{ fontSize: 12, color: "#64748B", marginBottom: 4 }}>{book.author}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            {book.authorImg && (
+              <img src={book.authorImg} alt={book.author} style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(124,58,237,0.5)" }} />
+            )}
+            <div style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600 }}>{book.author}</div>
+          </div>
           <div style={{ fontSize: 11, color: "#475569" }}>{book.subtitle}</div>
         </div>
       </div>
@@ -1057,6 +1083,13 @@ function PhaseTransition({
             {/* Researcher portrait */}
             {phase.insight.researcher && (
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                {phase.insight.researcher.img ? (
+                  <img
+                    src={phase.insight.researcher.img}
+                    alt={phase.insight.researcher.name}
+                    style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: `2px solid ${phase.insight.researcher.color}`, flexShrink: 0 }}
+                  />
+                ) : (
                 <div
                   style={{
                     width: 48,
@@ -1075,6 +1108,7 @@ function PhaseTransition({
                 >
                   {phase.insight.researcher.initials}
                 </div>
+                )}
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#E2E8F0" }}>
                     {phase.insight.researcher.name}
