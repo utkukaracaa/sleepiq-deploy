@@ -10,11 +10,6 @@ const SLEEP_TYPES = [
   { emoji: "🔋", label: "Recovery Açığı", color: "#F472B6" },
 ];
 
-const STATS = [
-  { value: "2 dk", label: "Test süresi" },
-  { value: "8 soru", label: "Kısa anket" },
-  { value: "%100", label: "Ücretsiz" },
-];
 
 export default function LandingPage() {
   const router = useRouter();
@@ -113,7 +108,7 @@ export default function LandingPage() {
               margin: 0,
             }}
           >
-            2 dakikalık ücretsiz testle gerçek uyku profilini keşfet.
+            Ücretsiz testle gerçek uyku profilini keşfet.
             Huberman & Walker metodolojisiyle hazırlandı.
           </p>
         </div>
@@ -151,35 +146,10 @@ export default function LandingPage() {
           ))}
         </div>
 
-        {/* Stats */}
-        <div
-          className="fade-in-up"
-          style={{
-            animationDelay: "0.3s",
-            display: "flex",
-            gap: 24,
-            width: "100%",
-            justifyContent: "center",
-          }}
-        >
-          {STATS.map((stat) => (
-            <div key={stat.label} style={{ textAlign: "center" }}>
-              <div
-                style={{ fontSize: 22, fontWeight: 700, color: "#A78BFA" }}
-              >
-                {stat.value}
-              </div>
-              <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
         {/* CTA */}
         <div
           className="fade-in-up"
-          style={{ animationDelay: "0.4s", width: "100%" }}
+          style={{ animationDelay: "0.3s", width: "100%" }}
         >
           <button
             className="btn-primary pulse-glow"
@@ -188,16 +158,6 @@ export default function LandingPage() {
           >
             Uyku Yaşımı Öğren →
           </button>
-          <p
-            style={{
-              textAlign: "center",
-              fontSize: 13,
-              color: "#475569",
-              marginTop: 10,
-            }}
-          >
-            Kredi kartı gerekmez · Sadece 2 dakika
-          </p>
         </div>
 
         {/* Social proof */}

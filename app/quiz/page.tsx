@@ -178,7 +178,6 @@ const QUESTIONS: Question[] = [
 ];
 
 const PHASE_TRANSITIONS: Record<number, { from: Phase; to: Phase }> = {
-  1: { from: PHASES[0], to: PHASES[1] },
   5: { from: PHASES[1], to: PHASES[2] },
   10: { from: PHASES[2], to: PHASES[3] },
   15: { from: PHASES[3], to: PHASES[4] },
@@ -261,7 +260,7 @@ export default function QuizPage() {
   const router = useRouter();
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
-  const [showTransition, setShowTransition] = useState<Phase | null>(PHASES[0]);
+  const [showTransition, setShowTransition] = useState<Phase | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const question = QUESTIONS[currentQ];
@@ -270,6 +269,18 @@ export default function QuizPage() {
 
   function handleAnswer(value: string) {
     setAnswers((prev) => ({ ...prev, [question.id]: value }));
+  }
+
+  function handleBack() {
+    if (currentQ > 0) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentQ(currentQ - 1);
+        setIsTransitioning(false);
+      }, 200);
+    } else {
+      router.push("/");
+    }
   }
 
   function handleNext() {
@@ -334,6 +345,22 @@ export default function QuizPage() {
             marginBottom: 20,
           }}
         >
+          <button
+            onClick={handleBack}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: "none",
+              border: "none",
+              color: "#64748B",
+              fontSize: 14,
+              cursor: "pointer",
+              padding: "4px 0",
+            }}
+          >
+            ← Geri
+          </button>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ fontSize: 18 }}>🌙</span>
             <span style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC" }}>
