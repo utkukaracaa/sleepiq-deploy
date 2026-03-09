@@ -48,9 +48,8 @@ const QUESTIONS: Question[] = [
   {
     id: "sleepLatency",
     question: "Uykuya dalman genelde ne kadar sürüyor?",
-    subtext: "Yatağa girdiğin andan itibaren.",
     phase: 1,
-    options: ["10 dakikadan az", "10–30 dakika", "30–60 dakika", "1 saatten fazla"],
+    options: ["Yatağa girdiğim andan itibaren", "10 dakikadan az", "10–30 dakika", "30–60 dakika", "1 saatten fazla"],
   },
   {
     id: "wakeCount",
