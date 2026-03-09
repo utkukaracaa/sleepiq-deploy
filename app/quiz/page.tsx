@@ -11,12 +11,32 @@ interface Insight {
   source: string;
 }
 
+interface CompanyBadge {
+  name: string;
+  initial: string;
+  color: string;
+  bg: string;
+}
+
+interface Testimonial {
+  headline: string;
+  companies: CompanyBadge[];
+  quote: string;
+  person: string;
+  role: string;
+  initials: string;
+  avatarColor: string;
+  corporateFact: string;
+  corporateSource: string;
+}
+
 interface Phase {
   id: number;
   emoji: string;
   title: string;
   subtitle: string;
   insight?: Insight;
+  testimonial?: Testimonial;
 }
 
 const PHASES: Phase[] = [
@@ -43,10 +63,22 @@ const PHASES: Phase[] = [
     emoji: "🎯",
     title: "Kimliğin & Hedeflerin",
     subtitle: "Seni neyin motive ettiğini anlıyoruz",
-    insight: {
-      type: "quote",
-      text: "\"Uyku önceliğimin bir göstergesidir. Yorgunken iyi kararlar veremiyorum, iyi düşünemiyorum. Uyku benim için müzakere edilemez.\"",
-      source: "Jeff Bezos — Amazon Kurucusu",
+    testimonial: {
+      headline: "Dünyanın en başarılı şirketleri bunu çalışanlarından talep ediyor",
+      companies: [
+        { name: "Google",         initial: "G",  color: "#4285F4", bg: "rgba(66,133,244,0.12)"  },
+        { name: "Apple",          initial: "⌘",  color: "#A8A9AD", bg: "rgba(168,169,173,0.12)" },
+        { name: "Nike",           initial: "✓",  color: "#F97316", bg: "rgba(249,115,22,0.12)"  },
+        { name: "Goldman",        initial: "GS", color: "#22C55E", bg: "rgba(34,197,94,0.12)"   },
+        { name: "Aetna",          initial: "A",  color: "#EF4444", bg: "rgba(239,68,68,0.12)"   },
+      ],
+      quote: "\"Uyku benim için müzakere edilemez. 8 saat uyuduğumda daha net düşünüyor, daha iyi kararlar alıyorum. Yorgunluk üzerinden liderlik edemezsin.\"",
+      person: "Jeff Bezos",
+      role: "Amazon Kurucusu & Yönetim Kurulu Başkanı",
+      initials: "JB",
+      avatarColor: "#FF9900",
+      corporateFact: "Aetna Insurance, 7+ saat uyuduğunu belgeleyen çalışanlarına yılda 300$ bonus veriyor. Şimdiye kadar 13.000'den fazla çalışan bu programdan yararlandı.",
+      corporateSource: "Aetna Employee Wellness Program — Mark Bertolini, CEO",
     },
   },
   {
@@ -242,6 +274,155 @@ const INSIGHT_LABELS: Record<Insight["type"], string> = {
   book: "📖 Kitaptan",
 };
 
+function TestimonialCard({ t }: { t: Testimonial }) {
+  return (
+    <div style={{ marginBottom: 28 }}>
+      {/* Headline */}
+      <p
+        style={{
+          fontSize: 11,
+          fontWeight: 700,
+          color: "#7C3AED",
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          textAlign: "center",
+          margin: "0 0 14px",
+        }}
+      >
+        🏢 Kurumsal Onay
+      </p>
+      <p
+        style={{
+          fontSize: 13,
+          color: "#94A3B8",
+          textAlign: "center",
+          margin: "0 0 16px",
+          lineHeight: 1.5,
+        }}
+      >
+        {t.headline}
+      </p>
+
+      {/* Company badges */}
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          flexWrap: "wrap",
+          justifyContent: "center",
+          marginBottom: 20,
+        }}
+      >
+        {t.companies.map((c) => (
+          <div
+            key={c.name}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: c.bg,
+              border: `1px solid ${c.color}33`,
+              borderRadius: 20,
+              padding: "5px 12px",
+            }}
+          >
+            <span
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: "50%",
+                background: c.color,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 9,
+                fontWeight: 800,
+                color: "#fff",
+                flexShrink: 0,
+              }}
+            >
+              {c.initial}
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#CBD5E1" }}>
+              {c.name}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div
+        style={{
+          height: 1,
+          background: "rgba(124,58,237,0.15)",
+          marginBottom: 16,
+        }}
+      />
+
+      {/* Personal testimonial */}
+      <div
+        style={{
+          background: "rgba(124,58,237,0.06)",
+          border: "1px solid rgba(124,58,237,0.18)",
+          borderRadius: 14,
+          padding: "16px 18px",
+          marginBottom: 12,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              background: t.avatarColor,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 13,
+              fontWeight: 800,
+              color: "#fff",
+              flexShrink: 0,
+            }}
+          >
+            {t.initials}
+          </div>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#F8FAFC" }}>{t.person}</div>
+            <div style={{ fontSize: 11, color: "#64748B" }}>{t.role}</div>
+          </div>
+          <div style={{ marginLeft: "auto", fontSize: 11, color: "#FBBF24" }}>★★★★★</div>
+        </div>
+        <p style={{ fontSize: 14, color: "#CBD5E1", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
+          {t.quote}
+        </p>
+      </div>
+
+      {/* Corporate fact */}
+      <div
+        style={{
+          background: "rgba(34,197,94,0.06)",
+          border: "1px solid rgba(34,197,94,0.18)",
+          borderRadius: 12,
+          padding: "14px 16px",
+        }}
+      >
+        <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+          <span style={{ fontSize: 16, flexShrink: 0 }}>📊</span>
+          <div>
+            <p style={{ fontSize: 13, color: "#86EFAC", lineHeight: 1.55, margin: "0 0 6px", fontWeight: 500 }}>
+              {t.corporateFact}
+            </p>
+            <span style={{ fontSize: 11, color: "#475569", fontStyle: "italic" }}>
+              {t.corporateSource}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PhaseTransition({
   phase,
   onContinue,
@@ -249,6 +430,7 @@ function PhaseTransition({
   phase: Phase;
   onContinue: () => void;
 }) {
+  const hasContent = phase.insight || phase.testimonial;
   return (
     <div
       style={{
@@ -259,14 +441,22 @@ function PhaseTransition({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "32px 24px",
+        padding: "28px 20px",
         zIndex: 100,
         animation: "fadeInUp 0.4s ease forwards",
+        overflowY: "auto",
       }}
     >
       <div style={{ width: "100%", maxWidth: 400 }}>
         {/* Phase header */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: phase.insight ? 32 : 40 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: hasContent ? 24 : 40,
+          }}
+        >
           <div
             style={{
               width: 72,
@@ -278,7 +468,7 @@ function PhaseTransition({
               alignItems: "center",
               justifyContent: "center",
               fontSize: 36,
-              marginBottom: 20,
+              marginBottom: 18,
             }}
           >
             {phase.emoji}
@@ -306,6 +496,9 @@ function PhaseTransition({
           </p>
         </div>
 
+        {/* Testimonial card */}
+        {phase.testimonial && <TestimonialCard t={phase.testimonial} />}
+
         {/* Insight card */}
         {phase.insight && (
           <div
@@ -314,7 +507,7 @@ function PhaseTransition({
               border: "1px solid rgba(124,58,237,0.2)",
               borderRadius: 16,
               padding: "20px 22px",
-              marginBottom: 32,
+              marginBottom: 28,
             }}
           >
             <span
