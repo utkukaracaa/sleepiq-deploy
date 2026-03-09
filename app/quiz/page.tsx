@@ -187,6 +187,12 @@ const QUESTIONS: Question[] = [
     question: "Sabah uyandığında kendini nasıl hissediyorsun?",
     phase: 1,
     options: ["Dinç ve enerjik", "Biraz yorgun", "Çok yorgun", "Alarmı sürekli erteliyorum"],
+    afterCard: {
+      emoji: "🧠",
+      label: "Biliyor Muydun?",
+      text: "Öğrenmeden önce uyumak beyni kuru bir sünger gibi hazırlar. Yeni bilgileri kaydetme kapasitesi uykusuz beyinde %40 oranında düşer.",
+      source: "Matthew Walker, Why We Sleep",
+    },
   },
   {
     id: "sleepLatency",
@@ -205,6 +211,12 @@ const QUESTIONS: Question[] = [
     question: "Gece kaç kez uyanırsın?",
     phase: 1,
     options: ["Hiç", "1 kez", "2–3 kez", "Çok sık"],
+    afterCard: {
+      emoji: "🏨",
+      label: "İlginç Gerçek",
+      text: "Yabancı bir yerde ilk uyuduğunuz gece beyninizin bir yarısı diğer yarısı kadar derin uyumaz — evrimin size yerleştirdiği bir gece nöbetçisi.",
+      source: "Current Biology (2016)",
+    },
   },
   {
     id: "readWalker",
@@ -219,6 +231,12 @@ const QUESTIONS: Question[] = [
     question: "Genel olarak uykunu nasıl değerlendirirsin?",
     phase: 1,
     options: ["Çok iyi", "Ortalama", "Zayıf", "Çok kötü"],
+    afterCard: {
+      emoji: "⚡",
+      label: "Biliyor Muydun?",
+      text: "Uyku eksikliği erkekleri 10 yaş yaşlandırır. Düzenli olarak 4–5 saat uyuyan erkeklerin testosteron seviyesi, 10 yaş büyük bir erkekle birebir aynıdır.",
+      source: "Matthew Walker, Why We Sleep",
+    },
   },
   // Phase 2 — Problem Deepening
   {
@@ -253,12 +271,24 @@ const QUESTIONS: Question[] = [
     subtext: "Kahve, çay, enerji içeceği dahil.",
     phase: 2,
     options: ["Hiç", "1 fincan", "2–3 fincan", "4+"],
+    afterCard: {
+      emoji: "☕",
+      label: "Kafein Gerçeği",
+      text: "Öğlen 12'de içtiğiniz kahvenin %25'i gece yarısı hala beyninizde dolanır ve derin uykunuzu %20 oranında bozar — uyusanız bile.",
+      source: "Journal of Sleep Research",
+    },
   },
   {
     id: "emptyBattery",
     question: "Gün içinde kendini \"boş pil\" gibi hissediyor musun?",
     phase: 2,
     options: ["Nadiren", "Bazen", "Sık sık", "Her gün"],
+    afterCard: {
+      emoji: "😔",
+      label: "Biliyor Muydun?",
+      text: "Uykusuzlukta beyin pozitif anıları yarı yarıya daha az hatırlar, ama negatif olayları aynı oranda hatırlar. Bu asimetri depresyona zemin hazırlar.",
+      source: "Sleep Journal (2021)",
+    },
   },
   {
     id: "bookInterest",
@@ -274,6 +304,12 @@ const QUESTIONS: Question[] = [
     question: "Öğleden sonra enerji düşüşü yaşar mısın?",
     phase: 2,
     options: ["Hayır", "Bazen", "Çoğu gün", "Her gün"],
+    afterCard: {
+      emoji: "😤",
+      label: "Biliyor Muydun?",
+      text: "Uyku eksikliği duygusal merkezinizi (amigdala) %60 daha tepkisel ve öfkeli hale getirir; mantıklı kararlar alan prefrontal korteks ise neredeyse devre dışı kalır.",
+      source: "Matthew Walker, Why We Sleep",
+    },
   },
   // Phase 3 — Identity & Aspiration
   {
@@ -287,6 +323,12 @@ const QUESTIONS: Question[] = [
     question: "Günde ekstra 2 saatin olsa ne yapardın?",
     phase: 3,
     options: ["Spor", "Kendime zaman", "İş / üretim", "Aile / sosyal hayat"],
+    afterCard: {
+      emoji: "💡",
+      label: "Rüya Bilimi",
+      text: "REM uykusunda beyin yeni bilgileri eski anılarla rastgele eşleştirir. Bu yüzden sabah kalktığında dün çözemediğin problemlere aniden çözüm bulursun.",
+      source: "Nature Neuroscience",
+    },
   },
   {
     id: "sleepLimitsPotential",
@@ -521,79 +563,58 @@ function InterstitialScreen({
   onContinue: () => void;
 }) {
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "#0A0E1A",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "32px 24px",
-        zIndex: 100,
-        animation: "fadeInUp 0.35s ease forwards",
-      }}
-    >
-      <div style={{ width: "100%", maxWidth: 400 }}>
-        <div
-          style={{
-            fontSize: 52,
-            textAlign: "center",
-            marginBottom: 20,
-          }}
-        >
-          {card.emoji}
-        </div>
+    <div style={{ animation: "fadeInUp 0.3s ease forwards" }}>
+      <div style={{ fontSize: 48, textAlign: "center", marginBottom: 16 }}>
+        {card.emoji}
+      </div>
+      <p
+        style={{
+          fontSize: 11,
+          fontWeight: 700,
+          color: "#7C3AED",
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          textAlign: "center",
+          margin: "0 0 18px",
+        }}
+      >
+        {card.label}
+      </p>
+      <div
+        style={{
+          background: "rgba(124,58,237,0.08)",
+          border: "1px solid rgba(124,58,237,0.2)",
+          borderRadius: 18,
+          padding: "22px 20px",
+          marginBottom: 28,
+        }}
+      >
         <p
           style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: "#7C3AED",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
+            fontSize: 16,
+            color: "#E2E8F0",
+            lineHeight: 1.75,
+            margin: "0 0 14px",
             textAlign: "center",
-            margin: "0 0 20px",
           }}
         >
-          {card.label}
+          {card.text}
         </p>
-        <div
+        <p
           style={{
-            background: "rgba(124,58,237,0.08)",
-            border: "1px solid rgba(124,58,237,0.2)",
-            borderRadius: 18,
-            padding: "24px 22px",
-            marginBottom: 28,
+            fontSize: 12,
+            color: "#475569",
+            fontStyle: "italic",
+            textAlign: "center",
+            margin: 0,
           }}
         >
-          <p
-            style={{
-              fontSize: 16,
-              color: "#E2E8F0",
-              lineHeight: 1.7,
-              margin: "0 0 16px",
-              textAlign: "center",
-            }}
-          >
-            {card.text}
-          </p>
-          <p
-            style={{
-              fontSize: 12,
-              color: "#475569",
-              fontStyle: "italic",
-              textAlign: "center",
-              margin: 0,
-            }}
-          >
-            {card.source}
-          </p>
-        </div>
-        <button className="btn-primary" style={{ fontSize: 16 }} onClick={onContinue}>
-          Anladım, Devam Et →
-        </button>
+          {card.source}
+        </p>
       </div>
+      <button className="btn-primary" style={{ fontSize: 16 }} onClick={onContinue}>
+        Anladım, Devam Et →
+      </button>
     </div>
   );
 }
@@ -956,22 +977,8 @@ function PhaseTransition({
 }) {
   const hasContent = phase.insight || phase.testimonial;
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "#0A0E1A",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "28px 20px",
-        zIndex: 100,
-        animation: "fadeInUp 0.4s ease forwards",
-        overflowY: "auto",
-      }}
-    >
-      <div style={{ width: "100%", maxWidth: 400 }}>
+    <div style={{ animation: "fadeInUp 0.35s ease forwards" }}>
+      <div>
         {/* Phase header */}
         <div
           style={{
@@ -1202,24 +1209,6 @@ export default function QuizPage() {
 
   const multiSelected = (answers.bookInterest ?? "").split(",").filter(Boolean);
 
-  if (showInterstitial) {
-    return (
-      <InterstitialScreen
-        card={showInterstitial}
-        onContinue={handleInterstitialContinue}
-      />
-    );
-  }
-
-  if (showTransition) {
-    return (
-      <PhaseTransition
-        phase={showTransition}
-        onContinue={() => setShowTransition(null)}
-      />
-    );
-  }
-
   return (
     <main
       style={{
@@ -1334,6 +1323,19 @@ export default function QuizPage() {
           </div>
         </div>
 
+        {/* Interstitial / Phase Transition / Question — inline */}
+        {showInterstitial ? (
+          <InterstitialScreen
+            card={showInterstitial}
+            onContinue={handleInterstitialContinue}
+          />
+        ) : showTransition ? (
+          <PhaseTransition
+            phase={showTransition}
+            onContinue={() => setShowTransition(null)}
+          />
+        ) : (
+          <>
         {/* Phase label */}
         <div style={{ marginBottom: 28 }}>
           <span
@@ -1477,6 +1479,8 @@ export default function QuizPage() {
             </>
           )}
         </div>
+          </>
+        )}
       </div>
     </main>
   );
