@@ -371,52 +371,68 @@ export default function QuizPage() {
           </span>
         </div>
 
-        {/* Phase + question indicator */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            marginBottom: 12,
-          }}
-        >
-          {PHASES.slice(1).map((ph) => {
-            const phaseQuestions = QUESTIONS.filter((q) => q.phase === ph.id);
-            const isActive = question.phase === ph.id;
-            return (
-              <div
-                key={ph.id}
-                style={{
-                  flex: phaseQuestions.length,
-                  display: "flex",
-                  gap: 2,
-                }}
-              >
-                {phaseQuestions.map((q) => {
-                  const isAnswered = answers[q.id] !== undefined;
-                  const isCurrent = q.id === question.id;
-                  return (
-                    <div
-                      key={q.id}
-                      style={{
-                        flex: 1,
-                        height: isCurrent ? 4 : 3,
-                        borderRadius: 2,
-                        background: isAnswered
-                          ? "linear-gradient(90deg, #7C3AED, #818CF8)"
-                          : isCurrent
-                          ? "rgba(124,58,237,0.6)"
-                          : isActive
-                          ? "rgba(124,58,237,0.2)"
-                          : "rgba(255,255,255,0.07)",
-                        transition: "all 0.25s ease",
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
+        {/* Two-tier progress: phase (top) + question (bottom) */}
+        <div style={{ marginBottom: 12 }}>
+          {/* Phase-level bar */}
+          <div style={{ display: "flex", gap: 4, marginBottom: 3 }}>
+            {PHASES.slice(1).map((ph) => {
+              const phaseQuestions = QUESTIONS.filter((q) => q.phase === ph.id);
+              const isActive = question.phase === ph.id;
+              const isDone = phaseQuestions.every((q) => answers[q.id] !== undefined);
+              return (
+                <div
+                  key={ph.id}
+                  style={{
+                    flex: phaseQuestions.length,
+                    height: 5,
+                    borderRadius: 3,
+                    background: isDone
+                      ? "linear-gradient(90deg, #7C3AED, #818CF8)"
+                      : isActive
+                      ? "rgba(124,58,237,0.45)"
+                      : "rgba(255,255,255,0.07)",
+                    transition: "all 0.3s ease",
+                  }}
+                />
+              );
+            })}
+          </div>
+          {/* Question-level bar */}
+          <div style={{ display: "flex", gap: 4 }}>
+            {PHASES.slice(1).map((ph) => {
+              const phaseQuestions = QUESTIONS.filter((q) => q.phase === ph.id);
+              const isActive = question.phase === ph.id;
+              return (
+                <div
+                  key={ph.id}
+                  style={{ flex: phaseQuestions.length, display: "flex", gap: 2 }}
+                >
+                  {phaseQuestions.map((q) => {
+                    const isAnswered = answers[q.id] !== undefined;
+                    const isCurrent = q.id === question.id;
+                    return (
+                      <div
+                        key={q.id}
+                        style={{
+                          flex: 1,
+                          height: 2,
+                          borderRadius: 1,
+                          background: isAnswered
+                            ? "linear-gradient(90deg, #7C3AED, #818CF8)"
+                            : isCurrent
+                            ? "rgba(124,58,237,0.6)"
+                            : isActive
+                            ? "rgba(124,58,237,0.15)"
+                            : "rgba(255,255,255,0.04)",
+                          transition: "all 0.25s ease",
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Phase label */}
