@@ -68,11 +68,11 @@ export default function LandingPage() {
               letterSpacing: "-0.02em",
             }}
           >
-            Uyku Yaşın{" "}
+            Uyku Skorun{" "}
             <span className="gradient-text">Kaç?</span>
           </h1>
           <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.65, margin: 0 }}>
-            Ücretsiz testle gerçek uyku profilini keşfet.<br />
+            Gerçek uyku profilini bilimsel analizle keşfet.<br />
             Walker & Van Dongen metodolojisiyle hazırlandı.
           </p>
         </div>
@@ -109,7 +109,7 @@ export default function LandingPage() {
             onClick={() => router.push("/quiz")}
             style={{ fontSize: 17, padding: "18px 32px" }}
           >
-            Uyku Yaşımı Öğren →
+            Uyku Skorumu Öğren →
           </button>
         </div>
 
@@ -140,7 +140,7 @@ export default function LandingPage() {
             ))}
           </div>
           <p style={{ fontSize: 13, color: "#64748B", margin: 0 }}>
-            <strong style={{ color: "#1E293B" }}>12.847</strong> kişi bu ay uyku yaşını öğrendi
+            <strong style={{ color: "#1E293B" }}>12.847</strong> kişi bu ay uyku skorunu ölçtürdü
           </p>
         </div>
 
@@ -153,9 +153,9 @@ export default function LandingPage() {
             fontSize: 12, color: "#94A3B8",
           }}
         >
-          <span>🔒 SSL Güvenli</span>
+          <span>🔒 SSL Güvenli Ödeme</span>
           <span>⚡ 3 dakika</span>
-          <span>✓ Ücretsiz</span>
+          <span>✓ Bilimsel Analiz</span>
         </div>
       </div>
     </main>
