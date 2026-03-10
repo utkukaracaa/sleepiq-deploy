@@ -459,11 +459,11 @@ function LogoAetna() {
 }
 
 const COMPANY_LOGOS = [
-  { name: "Google",  Logo: LogoGoogle,  bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
-  { name: "Apple",   Logo: LogoApple,   bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
-  { name: "Nike",    Logo: LogoNike,    bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
-  { name: "Goldman", Logo: LogoGoldman, bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
-  { name: "Aetna",   Logo: LogoAetna,   bg: "rgba(255,255,255,0.06)",  border: "rgba(255,255,255,0.1)" },
+  { name: "Google",  Logo: LogoGoogle,  bg: "#FFFFFF",  border: "#EDE8F5" },
+  { name: "Apple",   Logo: LogoApple,   bg: "#FFFFFF",  border: "#EDE8F5" },
+  { name: "Nike",    Logo: LogoNike,    bg: "#FFFFFF",  border: "#EDE8F5" },
+  { name: "Goldman", Logo: LogoGoldman, bg: "#FFFFFF",  border: "#EDE8F5" },
+  { name: "Aetna",   Logo: LogoAetna,   bg: "#FFFFFF",  border: "#EDE8F5" },
 ];
 
 // ─── Age Selection Grid ───────────────────────────────────────────────────────
@@ -549,7 +549,7 @@ function AgeGrid({
                 padding: "10px 0",
                 fontSize: 14,
                 fontWeight: 700,
-                color: isSelected ? "#0A0E1A" : "#CBD5E1",
+                color: isSelected ? "#FFFFFF" : "#1E293B",
                 textAlign: "center",
                 transition: "all 0.2s ease",
               }}
@@ -778,9 +778,9 @@ function BookCheckQuestion({
               style={{
                 padding: "15px 18px",
                 borderRadius: 13,
-                border: `1px solid ${sel ? "#7C3AED" : "rgba(124,58,237,0.15)"}`,
-                background: sel ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.03)",
-                color: sel ? "#A78BFA" : "#CBD5E1",
+                border: `1.5px solid ${sel ? "#7C3AED" : "#EDE8F5"}`,
+                background: sel ? "#F0EBFF" : "#FFFFFF",
+                color: sel ? "#7C3AED" : "#1E293B",
                 fontSize: 15,
                 fontWeight: sel ? 600 : 400,
                 textAlign: "left",
@@ -833,8 +833,8 @@ function BookMultiSelect({
               gap: 16,
               padding: "14px 16px",
               borderRadius: 14,
-              border: `1.5px solid ${sel ? "#7C3AED" : "rgba(124,58,237,0.15)"}`,
-              background: sel ? "rgba(124,58,237,0.1)" : "rgba(255,255,255,0.02)",
+              border: `1.5px solid ${sel ? "#7C3AED" : "#EDE8F5"}`,
+              background: sel ? "#F0EBFF" : "#FFFFFF",
               cursor: "pointer",
               transition: "all 0.15s ease",
               textAlign: "left",
@@ -842,7 +842,7 @@ function BookMultiSelect({
           >
             <BookCoverArt book={book} small />
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: sel ? "#A78BFA" : "#E2E8F0", marginBottom: 4 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: sel ? "#7C3AED" : "#1E293B", marginBottom: 4 }}>
                 {book.title}
               </div>
               <div style={{ fontSize: 12, color: "#64748B", marginBottom: 3 }}>{book.author}</div>
@@ -850,7 +850,7 @@ function BookMultiSelect({
             </div>
             <div style={{
               width: 26, height: 26, borderRadius: 6, flexShrink: 0,
-              border: `2px solid ${sel ? "#7C3AED" : "rgba(255,255,255,0.15)"}`,
+              border: `2px solid ${sel ? "#7C3AED" : "#C4B5FD"}`,
               background: sel ? "#7C3AED" : "transparent",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 13, color: "white", transition: "all 0.15s ease",
@@ -1460,11 +1460,9 @@ export default function QuizPage() {
                         gap: 14,
                         padding: "16px 18px",
                         borderRadius: 14,
-                        border: `1px solid ${selected ? "#7C3AED" : "rgba(124,58,237,0.15)"}`,
-                        background: selected
-                          ? "rgba(124, 58, 237, 0.15)"
-                          : "rgba(255,255,255,0.03)",
-                        color: selected ? "#A78BFA" : "#CBD5E1",
+                        border: `1.5px solid ${selected ? "#7C3AED" : "#EDE8F5"}`,
+                        background: selected ? "#F0EBFF" : "#FFFFFF",
+                        color: selected ? "#7C3AED" : "#1E293B",
                         fontSize: 15,
                         fontWeight: selected ? 600 : 400,
                         textAlign: "left",
@@ -1477,7 +1475,7 @@ export default function QuizPage() {
                           width: 22,
                           height: 22,
                           borderRadius: "50%",
-                          border: `2px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.2)"}`,
+                          border: `2px solid ${selected ? "#7C3AED" : "#C4B5FD"}`,
                           background: selected ? "#7C3AED" : "transparent",
                           flexShrink: 0,
                           display: "flex",
