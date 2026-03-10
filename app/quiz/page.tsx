@@ -609,30 +609,23 @@ function InterstitialScreen({
         >
           {card.text}
         </p>
-        {card.authorImg ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
-            {card.authorImg.includes("logo") ? (
-              <img
-                src={card.authorImg}
-                alt="Kaynak"
-                style={{ height: 22, maxWidth: 80, objectFit: "contain", opacity: 0.75, flexShrink: 0 }}
-              />
-            ) : (
-              <img
-                src={card.authorImg}
-                alt="Yazar"
-                style={{ width: 34, height: 34, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(124,58,237,0.4)", flexShrink: 0 }}
-              />
-            )}
-            <p style={{ fontSize: 12, color: "#64748B", fontStyle: "italic", margin: 0, textAlign: "left" }}>
-              {card.source}
-            </p>
-          </div>
-        ) : (
-          <p style={{ fontSize: 12, color: "#475569", fontStyle: "italic", textAlign: "center", margin: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4, justifyContent: card.authorImg ? "flex-start" : "center" }}>
+          {card.authorImg && (
+            <img
+              src={card.authorImg}
+              alt="Kaynak"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+              style={
+                card.authorImg.includes("logo")
+                  ? { height: 20, maxWidth: 72, objectFit: "contain", opacity: 0.7, flexShrink: 0 }
+                  : { width: 32, height: 32, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(124,58,237,0.4)", flexShrink: 0 }
+              }
+            />
+          )}
+          <p style={{ fontSize: 12, color: "#475569", fontStyle: "italic", margin: 0, textAlign: card.authorImg ? "left" : "center" }}>
             {card.source}
           </p>
-        )}
+        </div>
       </div>
       <button className="btn-primary" style={{ fontSize: 16 }} onClick={onContinue}>
         Anladım, Devam Et →
@@ -762,7 +755,12 @@ function BookCheckQuestion({
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             {book.authorImg && (
-              <img src={book.authorImg} alt={book.author} style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(124,58,237,0.5)" }} />
+              <img
+                src={book.authorImg}
+                alt={book.author}
+                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(124,58,237,0.5)" }}
+              />
             )}
             <div style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600 }}>{book.author}</div>
           </div>
@@ -1088,6 +1086,7 @@ function PhaseTransition({
                   <img
                     src={phase.insight.researcher.img}
                     alt={phase.insight.researcher.name}
+                    onError={(e) => { const el = e.target as HTMLImageElement; el.style.display = "none"; el.nextElementSibling && ((el.nextElementSibling as HTMLElement).style.display = "flex"); }}
                     style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: `2px solid ${phase.insight.researcher.color}`, flexShrink: 0 }}
                   />
                 ) : (
