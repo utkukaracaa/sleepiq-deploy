@@ -1170,7 +1170,7 @@ export default function QuizPage() {
   function advanceTo(nextIndex: number, updatedAnswers: Partial<QuizAnswers>) {
     if (nextIndex >= QUESTIONS.length) {
       localStorage.setItem("sleepiq_answers", JSON.stringify(updatedAnswers));
-      router.push("/results");
+      router.push("/register");
       return;
     }
     if (PHASE_TRANSITIONS[nextIndex]) {
