@@ -1196,6 +1196,16 @@ export default function QuizPage() {
   }
 
   function handleBack() {
+    // If showing a transition or interstitial, dismiss it and stay on current question
+    if (showTransition) {
+      setShowTransition(null);
+      return;
+    }
+    if (showInterstitial) {
+      setShowInterstitial(null);
+      setPendingNextIndex(null);
+      return;
+    }
     if (currentQ > 0) {
       setIsTransitioning(true);
       setTimeout(() => {

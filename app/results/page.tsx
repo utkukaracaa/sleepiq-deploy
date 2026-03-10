@@ -407,13 +407,6 @@ export default function ResultsPage() {
   const [countdown, setCountdown] = useState(894); // 14:54
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Email capture state
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [emailCaptured, setEmailCaptured] = useState(false);
-  const [emailInput, setEmailInput] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [emailSubmitting, setEmailSubmitting] = useState(false);
-
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem("sleepiq_answers");
@@ -426,13 +419,6 @@ export default function ResultsPage() {
     setTimeout(() => {
       setResult(res);
       setLoading(false);
-      // Show email modal after results load (unless already captured)
-      const alreadyCaptured = !!localStorage.getItem("sleepiq_email");
-      if (!alreadyCaptured) {
-        setTimeout(() => setShowEmailModal(true), 600);
-      } else {
-        setEmailCaptured(true);
-      }
     }, 3400);
   }, [router]);
 
@@ -452,32 +438,7 @@ export default function ResultsPage() {
   const ageDiff = result.sleepAge - result.realAge;
   const isOlder = ageDiff > 0;
 
-  const handleEmailSubmit = () => {
-    const trimmed = emailInput.trim();
-    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
-    if (!valid) {
-      setEmailError("Geçerli bir e-posta gir");
-      return;
-    }
-    setEmailSubmitting(true);
-    localStorage.setItem("sleepiq_email", trimmed);
-    setTimeout(() => {
-      setEmailSubmitting(false);
-      setShowEmailModal(false);
-      setEmailCaptured(true);
-    }, 400);
-  };
-
-  const handleEmailSkip = () => {
-    setShowEmailModal(false);
-    setEmailCaptured(true);
-  };
-
   const handleCta = () => {
-    if (!emailCaptured) {
-      setShowEmailModal(true);
-      return;
-    }
     router.push("/payment");
   };
 
@@ -1436,167 +1397,6 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* ── EMAIL CAPTURE MODAL ───────────────────────────────────────────── */}
-      {showEmailModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 200,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-          }}
-        >
-          {/* Backdrop */}
-          <div
-            onClick={handleEmailSkip}
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "rgba(0,0,0,0.45)",
-            }}
-          />
-
-          {/* Sheet */}
-          <div
-            style={{
-              position: "relative",
-              background: "#FFFFFF",
-              borderRadius: "20px 20px 0 0",
-              padding: "28px 20px 36px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 16,
-              boxShadow: "0 -8px 40px rgba(0,0,0,0.15)",
-              animation: "slideUp 0.35s ease",
-            }}
-          >
-            {/* Handle */}
-            <div
-              style={{
-                width: 40,
-                height: 4,
-                background: "#E2E8F0",
-                borderRadius: 99,
-                margin: "-12px auto 4px",
-              }}
-            />
-
-            {/* Moon icon */}
-            <div style={{ fontSize: 36, textAlign: "center", lineHeight: 1 }}>🌙</div>
-
-            <div style={{ textAlign: "center" }}>
-              <h2
-                style={{
-                  fontSize: 20,
-                  fontWeight: 800,
-                  color: "#1E293B",
-                  margin: "0 0 6px",
-                }}
-              >
-                Planın hazır!
-              </h2>
-              <p
-                style={{
-                  fontSize: 14,
-                  color: "#64748B",
-                  margin: 0,
-                  lineHeight: 1.5,
-                }}
-              >
-                Kişisel uyku planını ve özel indirim kodunu göndereceğimiz e-posta adresini gir.
-              </p>
-            </div>
-
-            {/* Input */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <input
-                type="email"
-                value={emailInput}
-                onChange={(e) => {
-                  setEmailInput(e.target.value);
-                  setEmailError("");
-                }}
-                onKeyDown={(e) => e.key === "Enter" && handleEmailSubmit()}
-                placeholder="ornek@email.com"
-                style={{
-                  padding: "14px 16px",
-                  border: `1.5px solid ${emailError ? "#EF4444" : "#E2E8F0"}`,
-                  borderRadius: 12,
-                  fontSize: 16,
-                  outline: "none",
-                  color: "#1E293B",
-                  background: "#F8FAFC",
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
-              />
-              {emailError && (
-                <p style={{ fontSize: 12, color: "#EF4444", margin: 0 }}>
-                  {emailError}
-                </p>
-              )}
-            </div>
-
-            {/* Submit */}
-            <button
-              onClick={handleEmailSubmit}
-              disabled={emailSubmitting}
-              style={{
-                width: "100%",
-                padding: "16px",
-                background: emailSubmitting ? "#93C5FD" : "#2563EB",
-                color: "#FFFFFF",
-                border: "none",
-                borderRadius: 14,
-                fontSize: 17,
-                fontWeight: 700,
-                cursor: emailSubmitting ? "not-allowed" : "pointer",
-                letterSpacing: "0.01em",
-                transition: "background 0.2s",
-              }}
-            >
-              {emailSubmitting ? "Kaydediliyor..." : "Planımı Gör →"}
-            </button>
-
-            {/* Skip */}
-            <button
-              onClick={handleEmailSkip}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#94A3B8",
-                fontSize: 13,
-                cursor: "pointer",
-                textAlign: "center",
-                padding: "4px 0",
-              }}
-            >
-              Şimdi değil
-            </button>
-
-            <p
-              style={{
-                fontSize: 11,
-                color: "#94A3B8",
-                textAlign: "center",
-                margin: 0,
-                lineHeight: 1.4,
-              }}
-            >
-              Spam göndermeyiz. İstediğin zaman abonelikten çıkabilirsin.
-            </p>
-          </div>
-        </div>
-      )}
-
-      <style>{`
-        @keyframes slideUp {
-          from { transform: translateY(100%); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
     </main>
   );
 }
