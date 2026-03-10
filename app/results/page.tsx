@@ -17,14 +17,42 @@ const LOADING_STEPS = [
   "Kişisel plan oluşturuluyor...",
 ];
 
+const MICRO_COMMITMENTS = [
+  "Dinleyerek öğrenmeyi sever misiniz?",
+  "Kendinize karşı tutarlı mısınız?",
+];
+
 function LoadingScreen() {
   const [step, setStep] = useState(0);
+  const [popup, setPopup] = useState<number | null>(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+
   useEffect(() => {
     const t = setInterval(() => {
       setStep((s) => (s < LOADING_STEPS.length - 1 ? s + 1 : s));
     }, 750);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => {
+      setPopup(0);
+      setPopupVisible(true);
+    }, 1200);
+    return () => clearTimeout(t1);
+  }, []);
+
+  const handleAnswer = () => {
+    setPopupVisible(false);
+    setTimeout(() => {
+      if (popup === 0) {
+        setPopup(1);
+        setPopupVisible(true);
+      } else {
+        setPopup(null);
+      }
+    }, 500);
+  };
 
   return (
     <div
@@ -36,6 +64,7 @@ function LoadingScreen() {
         justifyContent: "center",
         gap: 32,
         padding: 24,
+        position: "relative",
       }}
     >
       <div style={{ position: "relative", width: 80, height: 80 }}>
@@ -94,6 +123,82 @@ function LoadingScreen() {
           ))}
         </div>
       </div>
+
+      {/* Micro-commitment popup */}
+      {popup !== null && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            zIndex: 200,
+            opacity: popupVisible ? 1 : 0,
+            transition: "opacity 0.3s ease",
+            padding: "0 16px 32px",
+          }}
+        >
+          <div
+            style={{
+              background: "#1E2533",
+              borderRadius: 20,
+              padding: "24px 20px",
+              width: "100%",
+              maxWidth: 440,
+              border: "1px solid rgba(124,58,237,0.3)",
+              transform: popupVisible ? "translateY(0)" : "translateY(40px)",
+              transition: "transform 0.35s ease, opacity 0.3s ease",
+            }}
+          >
+            <p
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: "#818CF8",
+                margin: "0 0 10px",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              Devam etmek için seçiniz
+            </p>
+            <p
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                color: "#F8FAFC",
+                margin: "0 0 20px",
+                lineHeight: 1.4,
+              }}
+            >
+              {MICRO_COMMITMENTS[popup]}
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              {["Evet", "Hayır"].map((label) => (
+                <button
+                  key={label}
+                  onClick={handleAnswer}
+                  style={{
+                    flex: 1,
+                    padding: "13px",
+                    borderRadius: 12,
+                    border: "1.5px solid rgba(124,58,237,0.4)",
+                    background: "rgba(124,58,237,0.1)",
+                    color: "#F8FAFC",
+                    fontSize: 15,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -302,6 +407,13 @@ export default function ResultsPage() {
   const [countdown, setCountdown] = useState(894); // 14:54
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  // Email capture state
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailCaptured, setEmailCaptured] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
+
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem("sleepiq_answers");
@@ -314,6 +426,13 @@ export default function ResultsPage() {
     setTimeout(() => {
       setResult(res);
       setLoading(false);
+      // Show email modal after results load (unless already captured)
+      const alreadyCaptured = !!localStorage.getItem("sleepiq_email");
+      if (!alreadyCaptured) {
+        setTimeout(() => setShowEmailModal(true), 600);
+      } else {
+        setEmailCaptured(true);
+      }
     }, 3400);
   }, [router]);
 
@@ -333,7 +452,32 @@ export default function ResultsPage() {
   const ageDiff = result.sleepAge - result.realAge;
   const isOlder = ageDiff > 0;
 
+  const handleEmailSubmit = () => {
+    const trimmed = emailInput.trim();
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+    if (!valid) {
+      setEmailError("Geçerli bir e-posta gir");
+      return;
+    }
+    setEmailSubmitting(true);
+    localStorage.setItem("sleepiq_email", trimmed);
+    setTimeout(() => {
+      setEmailSubmitting(false);
+      setShowEmailModal(false);
+      setEmailCaptured(true);
+    }, 400);
+  };
+
+  const handleEmailSkip = () => {
+    setShowEmailModal(false);
+    setEmailCaptured(true);
+  };
+
   const handleCta = () => {
+    if (!emailCaptured) {
+      setShowEmailModal(true);
+      return;
+    }
     router.push("/payment");
   };
 
@@ -356,7 +500,7 @@ export default function ResultsPage() {
     },
     {
       q: "Mobil uygulaması var mı?",
-      a: "iOS ve Android uygulamaları mevcut. Kayıt sonrası erişim bilgileri e-postana gelir.",
+      a: "iOS ve Android uygulamaları mevcut. Ödeme sonrası App Store linki doğrudan ekranda belirir — mail beklemenize gerek yok. Hesabın anında aktif olur.",
     },
   ];
 
@@ -449,7 +593,7 @@ export default function ResultsPage() {
       >
         {/* ── 2. RESULT SUMMARY ───────────────────────────────────────────── */}
         <div style={{ paddingTop: 24 }}>
-          {/* Sleep Age Hero */}
+          {/* Sleep Score Hero */}
           <div
             style={{
               background: "#FFFFFF",
@@ -466,22 +610,31 @@ export default function ResultsPage() {
                 color: "#64748B",
                 margin: "0 0 4px",
                 fontWeight: 500,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
               }}
             >
-              Senin uyku yaşın:
+              Uyku Skorun
             </p>
-            <div
-              style={{
-                fontSize: 80,
-                fontWeight: 800,
-                lineHeight: 1,
-                background: "linear-gradient(135deg, #7C3AED, #EC4899)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                margin: "4px 0 12px",
-              }}
-            >
-              {result.sleepAge}
+            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 4, margin: "4px 0 8px" }}>
+              <div
+                style={{
+                  fontSize: 88,
+                  fontWeight: 800,
+                  lineHeight: 1,
+                  background:
+                    result.sleepScore >= 75
+                      ? "linear-gradient(135deg, #16A34A, #34D399)"
+                      : result.sleepScore >= 50
+                      ? "linear-gradient(135deg, #D97706, #FBBF24)"
+                      : "linear-gradient(135deg, #DC2626, #F87171)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                {result.sleepScore}
+              </div>
+              <span style={{ fontSize: 22, color: "#94A3B8", fontWeight: 600, paddingBottom: 14 }}>/100</span>
             </div>
             <div
               style={{
@@ -489,20 +642,24 @@ export default function ResultsPage() {
                 alignItems: "center",
                 gap: 6,
                 padding: "6px 16px",
-                background: isOlder ? "#FEF2F2" : "#F0FDF4",
-                border: `1px solid ${isOlder ? "#FECACA" : "#BBF7D0"}`,
+                background: result.sleepScore >= 75 ? "#F0FDF4" : result.sleepScore >= 50 ? "#FFFBEB" : "#FEF2F2",
+                border: `1px solid ${result.sleepScore >= 75 ? "#BBF7D0" : result.sleepScore >= 50 ? "#FDE68A" : "#FECACA"}`,
                 borderRadius: 100,
                 fontSize: 13,
                 fontWeight: 600,
-                color: isOlder ? "#DC2626" : "#16A34A",
+                color: result.sleepScore >= 75 ? "#16A34A" : result.sleepScore >= 50 ? "#D97706" : "#DC2626",
               }}
             >
-              {isOlder ? "▲" : "▼"} {Math.abs(ageDiff)} yıl{" "}
-              {isOlder ? "büyük" : "küçük"} görünüyor
+              {result.sleepScore >= 75 ? "İyi seviye — optimize edebilirsin" : result.sleepScore >= 50 ? "Gelişim alanı var" : "Acil müdahale gerekiyor"}
             </div>
+            {isOlder && (
+              <p style={{ fontSize: 12, color: "#94A3B8", margin: "10px 0 0" }}>
+                Uyku yaşın gerçek yaşından {Math.abs(ageDiff)} yıl büyük görünüyor
+              </p>
+            )}
           </div>
 
-          {/* Sleep Type + Score row */}
+          {/* Sleep Type + Apple Health row */}
           <div
             style={{
               display: "grid",
@@ -538,39 +695,32 @@ export default function ResultsPage() {
                 {typeInfo.label}
               </p>
             </div>
-            {/* Score chip */}
+            {/* Apple Health chip */}
             <div
               style={{
-                background: "#FFFFFF",
-                border: "1.5px solid #EDE8F5",
+                background: "#FFF0F5",
+                border: "1.5px solid #FECDD3",
                 borderRadius: 16,
                 padding: "18px 16px",
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 4,
+                gap: 6,
               }}
             >
-              <div
+              <span style={{ fontSize: 32 }}>❤️</span>
+              <p style={{ fontSize: 11, color: "#64748B", margin: 0 }}>
+                Daha derin analiz
+              </p>
+              <p
                 style={{
-                  fontSize: 40,
-                  fontWeight: 800,
-                  background:
-                    result.sleepScore >= 75
-                      ? "linear-gradient(135deg, #16A34A, #34D399)"
-                      : result.sleepScore >= 50
-                      ? "linear-gradient(135deg, #D97706, #FBBF24)"
-                      : "linear-gradient(135deg, #DC2626, #F87171)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  lineHeight: 1,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#BE185D",
+                  margin: 0,
+                  lineHeight: 1.3,
                 }}
               >
-                {result.sleepScore}
-              </div>
-              <p style={{ fontSize: 11, color: "#64748B", margin: 0 }}>
-                / 100 uyku skoru
+                Apple Health bağla
               </p>
             </div>
           </div>
@@ -921,11 +1071,13 @@ export default function ResultsPage() {
             SleepIQ ile neler elde edeceksin?
           </h3>
           {[
+            "5 saatte 10 saatin verimi — doğru uyku, çok uyku değildir",
             "21 günlük bilimsel uyku programı",
             "Uyku tipine özel günlük görevler",
             "Sabah ve gece rutinleri",
             "Sirkadiyen ritim optimizasyonu",
             "Haftalık ilerleme takibi",
+            "Apple Health entegrasyonu ile derin kişiselleştirme",
             "Bilimsel kaynaklı içerikler (Walker, Van Dongen)",
           ].map((feature, i, arr) => (
             <div
@@ -1283,6 +1435,168 @@ export default function ResultsPage() {
           </div>
         </div>
       </div>
+
+      {/* ── EMAIL CAPTURE MODAL ───────────────────────────────────────────── */}
+      {showEmailModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 200,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+          }}
+        >
+          {/* Backdrop */}
+          <div
+            onClick={handleEmailSkip}
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(0,0,0,0.45)",
+            }}
+          />
+
+          {/* Sheet */}
+          <div
+            style={{
+              position: "relative",
+              background: "#FFFFFF",
+              borderRadius: "20px 20px 0 0",
+              padding: "28px 20px 36px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 16,
+              boxShadow: "0 -8px 40px rgba(0,0,0,0.15)",
+              animation: "slideUp 0.35s ease",
+            }}
+          >
+            {/* Handle */}
+            <div
+              style={{
+                width: 40,
+                height: 4,
+                background: "#E2E8F0",
+                borderRadius: 99,
+                margin: "-12px auto 4px",
+              }}
+            />
+
+            {/* Moon icon */}
+            <div style={{ fontSize: 36, textAlign: "center", lineHeight: 1 }}>🌙</div>
+
+            <div style={{ textAlign: "center" }}>
+              <h2
+                style={{
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: "#1E293B",
+                  margin: "0 0 6px",
+                }}
+              >
+                Planın hazır!
+              </h2>
+              <p
+                style={{
+                  fontSize: 14,
+                  color: "#64748B",
+                  margin: 0,
+                  lineHeight: 1.5,
+                }}
+              >
+                Kişisel uyku planını ve özel indirim kodunu göndereceğimiz e-posta adresini gir.
+              </p>
+            </div>
+
+            {/* Input */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <input
+                type="email"
+                value={emailInput}
+                onChange={(e) => {
+                  setEmailInput(e.target.value);
+                  setEmailError("");
+                }}
+                onKeyDown={(e) => e.key === "Enter" && handleEmailSubmit()}
+                placeholder="ornek@email.com"
+                style={{
+                  padding: "14px 16px",
+                  border: `1.5px solid ${emailError ? "#EF4444" : "#E2E8F0"}`,
+                  borderRadius: 12,
+                  fontSize: 16,
+                  outline: "none",
+                  color: "#1E293B",
+                  background: "#F8FAFC",
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+              {emailError && (
+                <p style={{ fontSize: 12, color: "#EF4444", margin: 0 }}>
+                  {emailError}
+                </p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <button
+              onClick={handleEmailSubmit}
+              disabled={emailSubmitting}
+              style={{
+                width: "100%",
+                padding: "16px",
+                background: emailSubmitting ? "#93C5FD" : "#2563EB",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: 14,
+                fontSize: 17,
+                fontWeight: 700,
+                cursor: emailSubmitting ? "not-allowed" : "pointer",
+                letterSpacing: "0.01em",
+                transition: "background 0.2s",
+              }}
+            >
+              {emailSubmitting ? "Kaydediliyor..." : "Planımı Gör →"}
+            </button>
+
+            {/* Skip */}
+            <button
+              onClick={handleEmailSkip}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#94A3B8",
+                fontSize: 13,
+                cursor: "pointer",
+                textAlign: "center",
+                padding: "4px 0",
+              }}
+            >
+              Şimdi değil
+            </button>
+
+            <p
+              style={{
+                fontSize: 11,
+                color: "#94A3B8",
+                textAlign: "center",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Spam göndermeyiz. İstediğin zaman abonelikten çıkabilirsin.
+            </p>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes slideUp {
+          from { transform: translateY(100%); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
     </main>
   );
 }
