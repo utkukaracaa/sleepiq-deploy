@@ -498,7 +498,7 @@ function AgeGrid({
             onClick={() => onSelect(card.label)}
             style={{
               background: card.bg,
-              border: `2px solid ${isSelected ? card.accent : "rgba(255,255,255,0.08)"}`,
+              border: `2px solid ${isSelected ? card.accent : "rgba(124,58,237,0.15)"}`,
               borderRadius: 18,
               overflow: "hidden",
               cursor: "pointer",
@@ -545,7 +545,7 @@ function AgeGrid({
             {/* Label strip */}
             <div
               style={{
-                background: isSelected ? card.accent : "rgba(255,255,255,0.08)",
+                background: isSelected ? card.accent : "rgba(124,58,237,0.15)",
                 padding: "10px 0",
                 fontSize: 14,
                 fontWeight: 700,
@@ -601,7 +601,7 @@ function InterstitialScreen({
         <p
           style={{
             fontSize: 16,
-            color: "#E2E8F0",
+            color: "#475569",
             lineHeight: 1.75,
             margin: "0 0 14px",
             textAlign: "center",
@@ -740,9 +740,9 @@ function BookCheckQuestion({
           alignItems: "flex-start",
           marginBottom: 28,
           padding: "20px",
-          background: "rgba(255,255,255,0.03)",
+          background: "#FAFAFA",
           borderRadius: 16,
-          border: "1px solid rgba(255,255,255,0.07)",
+          border: "1px solid rgba(124,58,237,0.12)",
         }}
       >
         <BookCoverArt book={book} />
@@ -750,7 +750,7 @@ function BookCheckQuestion({
           <div style={{ fontSize: 11, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
             📚 Uyku Kitaplığı
           </div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#F8FAFC", lineHeight: 1.2, marginBottom: 8 }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#1E293B", lineHeight: 1.2, marginBottom: 8 }}>
             {book.title}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
@@ -778,7 +778,7 @@ function BookCheckQuestion({
               style={{
                 padding: "15px 18px",
                 borderRadius: 13,
-                border: `1px solid ${sel ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+                border: `1px solid ${sel ? "#7C3AED" : "rgba(124,58,237,0.15)"}`,
                 background: sel ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.03)",
                 color: sel ? "#A78BFA" : "#CBD5E1",
                 fontSize: 15,
@@ -833,7 +833,7 @@ function BookMultiSelect({
               gap: 16,
               padding: "14px 16px",
               borderRadius: 14,
-              border: `1.5px solid ${sel ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+              border: `1.5px solid ${sel ? "#7C3AED" : "rgba(124,58,237,0.15)"}`,
               background: sel ? "rgba(124,58,237,0.1)" : "rgba(255,255,255,0.02)",
               cursor: "pointer",
               transition: "all 0.15s ease",
@@ -958,12 +958,12 @@ function TestimonialCard({ t }: { t: Testimonial }) {
             />
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#F8FAFC" }}>{t.person}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#1E293B" }}>{t.person}</div>
             <div style={{ fontSize: 11, color: "#64748B" }}>{t.role}</div>
           </div>
           <div style={{ marginLeft: "auto", fontSize: 11, color: "#FBBF24" }}>★★★★★</div>
         </div>
-        <p style={{ fontSize: 14, color: "#CBD5E1", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
+        <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
           {t.quote}
         </p>
       </div>
@@ -1033,7 +1033,7 @@ function PhaseTransition({
             style={{
               fontSize: 26,
               fontWeight: 800,
-              color: "#F8FAFC",
+              color: "#1E293B",
               margin: "0 0 8px",
               textAlign: "center",
             }}
@@ -1110,7 +1110,7 @@ function PhaseTransition({
                 </div>
                 )}
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#E2E8F0" }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#475569" }}>
                     {phase.insight.researcher.name}
                   </div>
                   <div style={{ fontSize: 11, color: "#64748B" }}>
@@ -1122,7 +1122,7 @@ function PhaseTransition({
             <p
               style={{
                 fontSize: 15,
-                color: "#CBD5E1",
+                color: "#334155",
                 lineHeight: 1.65,
                 margin: "0 0 12px",
               }}
@@ -1284,7 +1284,7 @@ export default function QuizPage() {
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ fontSize: 18 }}>🌙</span>
-            <span style={{ fontSize: 16, fontWeight: 700, color: "#F8FAFC" }}>
+            <span style={{ fontSize: 16, fontWeight: 700, color: "#1E293B" }}>
               SleepIQ
             </span>
           </div>
@@ -1312,7 +1312,7 @@ export default function QuizPage() {
                       ? "linear-gradient(90deg, #7C3AED, #818CF8)"
                       : isActive
                       ? "rgba(124,58,237,0.45)"
-                      : "rgba(255,255,255,0.07)",
+                      : "rgba(124,58,237,0.12)",
                     transition: "all 0.3s ease",
                   }}
                 />
@@ -1345,7 +1345,7 @@ export default function QuizPage() {
                             ? "rgba(124,58,237,0.6)"
                             : isActive
                             ? "rgba(124,58,237,0.15)"
-                            : "rgba(255,255,255,0.04)",
+                            : "rgba(124,58,237,0.06)",
                           transition: "all 0.25s ease",
                         }}
                       />
@@ -1397,7 +1397,7 @@ export default function QuizPage() {
             style={{
               fontSize: 24,
               fontWeight: 700,
-              color: "#F8FAFC",
+              color: "#1E293B",
               margin: "0 0 8px",
               lineHeight: 1.35,
             }}
@@ -1460,7 +1460,7 @@ export default function QuizPage() {
                         gap: 14,
                         padding: "16px 18px",
                         borderRadius: 14,
-                        border: `1px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+                        border: `1px solid ${selected ? "#7C3AED" : "rgba(124,58,237,0.15)"}`,
                         background: selected
                           ? "rgba(124, 58, 237, 0.15)"
                           : "rgba(255,255,255,0.03)",

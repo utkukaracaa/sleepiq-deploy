@@ -4,153 +4,106 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const SLEEP_TYPES = [
-  { emoji: "🦉", label: "Gece Kuşu", color: "#818CF8" },
-  { emoji: "🌊", label: "Parçalı Uyuyan", color: "#38BDF8" },
-  { emoji: "⚡", label: "Stres Uykucusu", color: "#FB923C" },
-  { emoji: "🔋", label: "Recovery Açığı", color: "#F472B6" },
+  { emoji: "🦉", label: "Gece Kuşu", color: "#7C3AED" },
+  { emoji: "🌊", label: "Parçalı Uyuyan", color: "#0891B2" },
+  { emoji: "⚡", label: "Stres Uykucusu", color: "#F97316" },
+  { emoji: "🔋", label: "Recovery Açığı", color: "#EC4899" },
 ];
-
 
 export default function LandingPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  useEffect(() => { setMounted(true); }, []);
   if (!mounted) return null;
 
   return (
-    <main className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4 py-12">
-      {/* Background orbs */}
-      <div
-        style={{
-          position: "fixed",
-          top: "10%",
-          right: "5%",
-          width: 300,
-          height: 300,
-          background: "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)",
-          borderRadius: "50%",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "10%",
-          left: "5%",
-          width: 250,
-          height: 250,
-          background: "radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)",
-          borderRadius: "50%",
-          pointerEvents: "none",
-        }}
-      />
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "#FFF6F0",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "40px 20px",
+      }}
+    >
+      <div style={{ width: "100%", maxWidth: 440, display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
 
-      <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center gap-8">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <div
             style={{
-              width: 36,
-              height: 36,
-              background: "linear-gradient(135deg, #7C3AED, #6366F1)",
+              width: 36, height: 36,
+              background: "linear-gradient(135deg, #7C3AED, #EC4899)",
               borderRadius: 10,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 18,
             }}
           >
             🌙
           </div>
-          <span style={{ fontSize: 20, fontWeight: 700, color: "#F8FAFC" }}>SleepIQ</span>
+          <span style={{ fontSize: 20, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.02em" }}>
+            sleep<span style={{ background: "linear-gradient(135deg,#7C3AED,#EC4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>IQ</span>
+          </span>
         </div>
 
-        {/* Hero section */}
-        <div className="text-center fade-in-up" style={{ animationDelay: "0.1s" }}>
+        {/* Hero */}
+        <div className="fade-in-up" style={{ textAlign: "center" }}>
           <div
             style={{
-              display: "inline-block",
-              padding: "6px 14px",
-              background: "rgba(124, 58, 237, 0.15)",
-              border: "1px solid rgba(124, 58, 237, 0.3)",
-              borderRadius: 100,
-              fontSize: 13,
-              color: "#A78BFA",
-              fontWeight: 500,
-              marginBottom: 20,
+              display: "inline-block", padding: "6px 16px",
+              background: "#F0EBFF", border: "1px solid #C4B5FD",
+              borderRadius: 100, fontSize: 13, color: "#7C3AED", fontWeight: 600,
+              marginBottom: 18,
             }}
           >
-            Bilimsel Uyku Analizi
+            🔬 Bilimsel Uyku Analizi
           </div>
-
           <h1
             style={{
-              fontSize: 40,
-              fontWeight: 800,
-              lineHeight: 1.15,
-              margin: "0 0 16px 0",
-              color: "#F8FAFC",
+              fontSize: 38, fontWeight: 800, lineHeight: 1.15,
+              color: "#1E293B", margin: "0 0 14px",
+              letterSpacing: "-0.02em",
             }}
           >
             Uyku Yaşın{" "}
             <span className="gradient-text">Kaç?</span>
           </h1>
-
-          <p
-            style={{
-              fontSize: 17,
-              color: "#94A3B8",
-              lineHeight: 1.6,
-              margin: 0,
-            }}
-          >
-            Ücretsiz testle gerçek uyku profilini keşfet.
-            Huberman & Walker metodolojisiyle hazırlandı.
+          <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.65, margin: 0 }}>
+            Ücretsiz testle gerçek uyku profilini keşfet.<br />
+            Walker & Van Dongen metodolojisiyle hazırlandı.
           </p>
         </div>
 
-        {/* Sleep type cards */}
+        {/* Sleep type chips */}
         <div
           className="fade-in-up"
           style={{
-            animationDelay: "0.2s",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 10,
-            width: "100%",
+            display: "grid", gridTemplateColumns: "1fr 1fr",
+            gap: 10, width: "100%", animationDelay: "0.1s",
           }}
         >
           {SLEEP_TYPES.map((type) => (
             <div
               key={type.label}
-              className="glass"
               style={{
-                borderRadius: 14,
-                padding: "14px 16px",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
+                background: "#FFFFFF",
+                border: "1.5px solid #EDE8F5",
+                borderRadius: 14, padding: "14px 16px",
+                display: "flex", alignItems: "center", gap: 10,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
               }}
             >
               <span style={{ fontSize: 22 }}>{type.emoji}</span>
-              <span
-                style={{ fontSize: 13, fontWeight: 500, color: type.color }}
-              >
-                {type.label}
-              </span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: type.color }}>{type.label}</span>
             </div>
           ))}
         </div>
 
         {/* CTA */}
-        <div
-          className="fade-in-up"
-          style={{ animationDelay: "0.3s", width: "100%" }}
-        >
+        <div className="fade-in-up" style={{ width: "100%", animationDelay: "0.2s" }}>
           <button
             className="btn-primary pulse-glow"
             onClick={() => router.push("/quiz")}
@@ -160,43 +113,49 @@ export default function LandingPage() {
           </button>
         </div>
 
-        {/* Social proof */}
+        {/* Promise strip */}
         <div
-          className="fade-in-up glass"
+          className="fade-in-up"
           style={{
-            animationDelay: "0.5s",
-            borderRadius: 14,
-            padding: "14px 20px",
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
+            animationDelay: "0.3s", width: "100%",
+            background: "#FFFFFF", border: "1.5px solid #EDE8F5",
+            borderRadius: 14, padding: "14px 20px",
+            display: "flex", alignItems: "center", gap: 16,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
           }}
         >
           <div style={{ display: "flex" }}>
-            {["👨", "👩", "🧑", "👱"].map((emoji, i) => (
+            {["👨", "👩", "🧑", "👱"].map((e, i) => (
               <div
                 key={i}
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  background: "rgba(124,58,237,0.3)",
-                  border: "2px solid #0A0E1A",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 14,
-                  marginLeft: i > 0 ? -8 : 0,
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: "#F0EBFF", border: "2px solid #FFF6F0",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 14, marginLeft: i > 0 ? -8 : 0,
                 }}
               >
-                {emoji}
+                {e}
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 13, color: "#94A3B8", margin: 0 }}>
-            <strong style={{ color: "#F8FAFC" }}>12.847</strong> kişi bu ay uyku yaşını öğrendi
+          <p style={{ fontSize: 13, color: "#64748B", margin: 0 }}>
+            <strong style={{ color: "#1E293B" }}>12.847</strong> kişi bu ay uyku yaşını öğrendi
           </p>
+        </div>
+
+        {/* Trust */}
+        <div
+          className="fade-in-up"
+          style={{
+            animationDelay: "0.4s",
+            display: "flex", gap: 20, justifyContent: "center",
+            fontSize: 12, color: "#94A3B8",
+          }}
+        >
+          <span>🔒 SSL Güvenli</span>
+          <span>⚡ 3 dakika</span>
+          <span>✓ Ücretsiz</span>
         </div>
       </div>
     </main>
