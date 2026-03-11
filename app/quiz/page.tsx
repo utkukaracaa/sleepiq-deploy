@@ -192,26 +192,12 @@ const QUESTIONS: Question[] = [
     question: "Sabah uyandığında kendini nasıl hissediyorsun?",
     phase: 1,
     options: ["Dinç ve enerjik", "Biraz yorgun", "Çok yorgun", "Alarmı sürekli erteliyorum"],
-    afterCard: {
-      emoji: "🧠",
-      label: "Biliyor Muydun?",
-      text: "Öğrenmeden önce uyumak beyni kuru bir sünger gibi hazırlar. Yeni bilgileri kaydetme kapasitesi uykusuz beyinde %40 oranında düşer.",
-      source: "Matthew Walker, Why We Sleep",
-      authorImg: "/matthew-walker.jpg",
-    },
   },
   {
     id: "sleepLatency",
     question: "Uykuya dalman genelde ne kadar sürüyor?",
     phase: 1,
     options: ["Yatağa girdiğim andan itibaren", "10 dakikadan az", "10–30 dakika", "30–60 dakika", "1 saatten fazla"],
-    afterCard: {
-      emoji: "⏱️",
-      label: "Biliyor muydun?",
-      text: "Uykuya dalmak 20 dakikadan uzun sürüyorsa buna \"uyku gecikmesi\" denir ve bu başlı başına bir uyku bozukluğu işaretidir. İdeal süre 7–15 dakikadır.",
-      source: "American Academy of Sleep Medicine",
-      authorImg: "/aasm-logo.png",
-    },
   },
   {
     id: "wakeCount",
@@ -252,12 +238,6 @@ const QUESTIONS: Question[] = [
     question: "Sabahları dinlenmiş uyanamamak seni ne kadar etkiliyor?",
     phase: 2,
     options: ["Hiç etkilemiyor", "Bazen", "Sık sık", "Her gün"],
-    afterCard: {
-      emoji: "🧠",
-      label: "Araştırma Bulgusu",
-      text: "Haftada 3+ gün yorgun uyanmak, kronik uyku yoksunluğu kategorisine girer. Bu durum uzun vadede kalp hastalığı, obezite ve depresyon riskini ikiye katlıyor.",
-      source: "National Sleep Foundation, Sleep Health Journal (2022)",
-    },
   },
   {
     id: "impactArea",
@@ -291,12 +271,6 @@ const QUESTIONS: Question[] = [
     question: "Gün içinde kendini \"boş pil\" gibi hissediyor musun?",
     phase: 2,
     options: ["Nadiren", "Bazen", "Sık sık", "Her gün"],
-    afterCard: {
-      emoji: "😔",
-      label: "Biliyor Muydun?",
-      text: "Uykusuzlukta beyin pozitif anıları yarı yarıya daha az hatırlar, ama negatif olayları aynı oranda hatırlar. Bu asimetri depresyona zemin hazırlar.",
-      source: "Sleep Journal (2021)",
-    },
   },
   {
     id: "bookInterest",
@@ -545,11 +519,11 @@ function AgeGrid({
             {/* Label strip */}
             <div
               style={{
-                background: isSelected ? card.accent : "rgba(124,58,237,0.15)",
+                background: isSelected ? card.accent : "rgba(255,255,255,0.15)",
                 padding: "10px 0",
                 fontSize: 14,
                 fontWeight: 700,
-                color: isSelected ? "#FFFFFF" : "#1E293B",
+                color: "#FFFFFF",
                 textAlign: "center",
                 transition: "all 0.2s ease",
               }}
@@ -572,7 +546,7 @@ function InterstitialScreen({
   onContinue: () => void;
 }) {
   return (
-    <div style={{ animation: "fadeInUp 0.3s ease forwards" }}>
+    <div style={{ animation: "fadeInUp 0.3s ease forwards", display: "flex", flexDirection: "column", flex: 1 }}>
       <div style={{ fontSize: 48, textAlign: "center", marginBottom: 16 }}>
         {card.emoji}
       </div>
@@ -627,7 +601,7 @@ function InterstitialScreen({
           </p>
         </div>
       </div>
-      <button className="btn-primary" style={{ fontSize: 16 }} onClick={onContinue}>
+      <button className="btn-primary" style={{ fontSize: 16, marginTop: "auto" }} onClick={onContinue}>
         Anladım, Devam Et →
       </button>
     </div>
@@ -1002,7 +976,7 @@ function PhaseTransition({
 }) {
   const hasContent = phase.insight || phase.testimonial;
   return (
-    <div style={{ animation: "fadeInUp 0.35s ease forwards" }}>
+    <div style={{ animation: "fadeInUp 0.35s ease forwards", display: "flex", flexDirection: "column", flex: 1 }}>
       <div>
         {/* Phase header */}
         <div
@@ -1143,7 +1117,7 @@ function PhaseTransition({
 
         <button
           className="btn-primary"
-          style={{ fontSize: 16 }}
+          style={{ fontSize: 16, marginTop: "auto" }}
           onClick={onContinue}
         >
           Devam Et →
@@ -1164,8 +1138,26 @@ export default function QuizPage() {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const question = QUESTIONS[currentQ];
-  const progress = (currentQ / QUESTIONS.length) * 100;
   const currentAnswer = answers[question.id];
+
+  // Build a flat ordered list of all display steps (questions + infos + transitions)
+  const ALL_STEPS = (() => {
+    const steps: Array<{ kind: "q" | "info" | "trans"; ref: number }> = [];
+    for (let i = 0; i < QUESTIONS.length; i++) {
+      steps.push({ kind: "q", ref: i });
+      if (QUESTIONS[i].afterCard) steps.push({ kind: "info", ref: i });
+      if (PHASE_TRANSITIONS[i + 1]) steps.push({ kind: "trans", ref: i + 1 });
+    }
+    return steps;
+  })();
+
+  const currentStepIdx = showInterstitial
+    ? ALL_STEPS.findIndex((s) => s.kind === "info" && s.ref === (pendingNextIndex! - 1))
+    : showTransition
+    ? ALL_STEPS.findIndex((s) => s.kind === "trans" && s.ref === currentQ)
+    : ALL_STEPS.findIndex((s) => s.kind === "q" && s.ref === currentQ);
+  const displayStep = currentStepIdx + 1;
+  const totalSteps = ALL_STEPS.length;
 
   function advanceTo(nextIndex: number, updatedAnswers: Partial<QuizAnswers>) {
     if (nextIndex >= QUESTIONS.length) {
@@ -1299,7 +1291,7 @@ export default function QuizPage() {
             </span>
           </div>
           <span style={{ fontSize: 13, color: "#64748B" }}>
-            {currentQ + 1} / {QUESTIONS.length}
+            {displayStep} / {totalSteps}
           </span>
         </div>
 
@@ -1368,6 +1360,7 @@ export default function QuizPage() {
         </div>
 
         {/* Interstitial / Phase Transition / Question — inline */}
+        <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "calc(100vh - 200px)" }}>
         {showInterstitial ? (
           <InterstitialScreen
             card={showInterstitial}
@@ -1401,6 +1394,9 @@ export default function QuizPage() {
             opacity: isTransitioning ? 0 : 1,
             transform: isTransitioning ? "translateY(-8px)" : "translateY(0)",
             transition: "all 0.2s ease",
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
           }}
         >
           <h2
@@ -1431,7 +1427,7 @@ export default function QuizPage() {
                 className="btn-primary"
                 onClick={handleNext}
                 disabled={!currentAnswer}
-                style={{ opacity: currentAnswer ? 1 : 0.4, cursor: currentAnswer ? "pointer" : "not-allowed" }}
+                style={{ opacity: currentAnswer ? 1 : 0.4, cursor: currentAnswer ? "pointer" : "not-allowed", marginTop: "auto" }}
               >
                 Devam Et →
               </button>
@@ -1443,7 +1439,7 @@ export default function QuizPage() {
                 className="btn-primary"
                 onClick={handleNext}
                 disabled={multiSelected.length === 0}
-                style={{ opacity: multiSelected.length > 0 ? 1 : 0.4, cursor: multiSelected.length > 0 ? "pointer" : "not-allowed" }}
+                style={{ opacity: multiSelected.length > 0 ? 1 : 0.4, cursor: multiSelected.length > 0 ? "pointer" : "not-allowed", marginTop: "auto" }}
               >
                 Devam Et →
               </button>
@@ -1455,7 +1451,7 @@ export default function QuizPage() {
                   display: "flex",
                   flexDirection: "column",
                   gap: 10,
-                  marginBottom: 32,
+                  flex: 1,
                 }}
               >
                 {question.options.map((opt) => {
@@ -1512,6 +1508,7 @@ export default function QuizPage() {
                 style={{
                   opacity: currentAnswer ? 1 : 0.4,
                   cursor: currentAnswer ? "pointer" : "not-allowed",
+                  marginTop: 24,
                 }}
               >
                 {currentQ < QUESTIONS.length - 1
@@ -1523,6 +1520,7 @@ export default function QuizPage() {
         </div>
           </>
         )}
+        </div>
       </div>
     </main>
   );
