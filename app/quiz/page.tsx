@@ -554,10 +554,13 @@ function AgeGrid({
 function InterstitialScreen({
   card,
   onContinue,
+  ageSegment,
 }: {
   card: InterstitialCard;
   onContinue: () => void;
+  ageSegment?: string;
 }) {
+  const ageText = ageSegment && card.ageInsight?.[ageSegment];
   return (
     <div style={{ animation: "fadeInUp 0.3s ease forwards", display: "flex", flexDirection: "column", flex: 1 }}>
       <div style={{ fontSize: 48, textAlign: "center", marginBottom: 16 }}>
@@ -585,6 +588,22 @@ function InterstitialScreen({
           marginBottom: 28,
         }}
       >
+        {ageText && (
+          <div
+            style={{
+              background: "rgba(124,58,237,0.13)",
+              borderRadius: 10,
+              padding: "10px 14px",
+              marginBottom: 16,
+              fontSize: 13,
+              color: "#5B21B6",
+              fontWeight: 600,
+              lineHeight: 1.5,
+            }}
+          >
+            📊 {ageSegment} yaş grubunda: {ageText}
+          </div>
+        )}
         <p
           style={{
             fontSize: 16,
@@ -967,7 +986,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
           <span style={{ fontSize: 16, flexShrink: 0 }}>📊</span>
           <div>
-            <p style={{ fontSize: 13, color: "#86EFAC", lineHeight: 1.55, margin: "0 0 6px", fontWeight: 500 }}>
+            <p style={{ fontSize: 13, color: "#166534", lineHeight: 1.55, margin: "0 0 6px", fontWeight: 600 }}>
               {t.corporateFact}
             </p>
             <span style={{ fontSize: 11, color: "#475569", fontStyle: "italic" }}>
@@ -1378,6 +1397,7 @@ export default function QuizPage() {
           <InterstitialScreen
             card={showInterstitial}
             onContinue={handleInterstitialContinue}
+            ageSegment={answers.ageSegment}
           />
         ) : showTransition ? (
           <PhaseTransition
