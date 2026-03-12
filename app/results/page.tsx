@@ -394,6 +394,272 @@ function PaymentFooter({ finePrint = false }: { finePrint?: boolean }) {
   );
 }
 
+// ─── App Preview Section ──────────────────────────────────────────────────────
+function AppPreviewSection() {
+  return (
+    <div
+      style={{
+        background: "#FFFFFF",
+        border: "1.5px solid #EDE8F5",
+        borderRadius: 20,
+        padding: "22px 18px",
+        marginBottom: 24,
+      }}
+    >
+      <h3
+        style={{
+          fontSize: 17,
+          fontWeight: 700,
+          color: "#1E293B",
+          margin: "0 0 4px",
+        }}
+      >
+        Uygulamanın içine bir göz at
+      </h3>
+      <p style={{ fontSize: 13, color: "#64748B", margin: "0 0 20px" }}>
+        Her gün eliminin altında olacak, kişisel uyku koçun
+      </p>
+
+      {/* Phone mockup */}
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div
+          style={{
+            width: 220,
+            borderRadius: 36,
+            border: "8px solid #1E293B",
+            background: "#080C18",
+            overflow: "hidden",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.18)",
+          }}
+        >
+          {/* Status bar */}
+          <div
+            style={{
+              background: "#0F172A",
+              padding: "8px 16px 4px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}>09:41</span>
+            <div style={{ width: 40, height: 12, background: "#1E293B", borderRadius: 8 }} />
+            <span style={{ fontSize: 9, color: "#94A3B8" }}>⚡</span>
+          </div>
+
+          {/* App header */}
+          <div
+            style={{
+              background: "linear-gradient(180deg, #1a1040 0%, #080C18 100%)",
+              padding: "12px 14px 10px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 9,
+                color: "#A78BFA",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                marginBottom: 2,
+              }}
+            >
+              GÜN 1 / 21
+            </div>
+            <div
+              style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.2 }}
+            >
+              Uyku Planın
+            </div>
+            {/* Progress bar */}
+            <div
+              style={{
+                marginTop: 8,
+                height: 3,
+                background: "#1E293B",
+                borderRadius: 4,
+              }}
+            >
+              <div
+                style={{
+                  width: "5%",
+                  height: "100%",
+                  background: "linear-gradient(90deg, #7C3AED, #818CF8)",
+                  borderRadius: 4,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Weekly strip */}
+          <div
+            style={{
+              padding: "10px 14px",
+              borderBottom: "1px solid rgba(255,255,255,0.05)",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 8,
+                color: "#64748B",
+                fontWeight: 600,
+                marginBottom: 6,
+                textTransform: "uppercase" as const,
+              }}
+            >
+              Bu Hafta
+            </div>
+            <div style={{ display: "flex", gap: 4, justifyContent: "center" }}>
+              {(["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"] as const).map((day, i) => (
+                <div key={i} style={{ textAlign: "center" as const }}>
+                  <div style={{ fontSize: 6, color: i === 0 ? "#A78BFA" : "#475569", marginBottom: 2 }}>
+                    {day}
+                  </div>
+                  <div
+                    style={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: 6,
+                      background:
+                        i === 0
+                          ? "linear-gradient(135deg, #7C3AED, #818CF8)"
+                          : "rgba(255,255,255,0.04)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {i === 0 && <span style={{ fontSize: 10 }}>🌙</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Today's task */}
+          <div style={{ padding: "10px 14px" }}>
+            <div
+              style={{
+                fontSize: 8,
+                color: "#64748B",
+                fontWeight: 600,
+                marginBottom: 8,
+                textTransform: "uppercase" as const,
+              }}
+            >
+              Bugünkü Görev
+            </div>
+            <div
+              style={{
+                background: "rgba(124,58,237,0.12)",
+                border: "1px solid rgba(124,58,237,0.25)",
+                borderRadius: 10,
+                padding: "10px",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 4 }}
+              >
+                <span style={{ fontSize: 12, flexShrink: 0 }}>🌙</span>
+                <div
+                  style={{ fontSize: 9, fontWeight: 700, color: "#E2E8F0", lineHeight: 1.4 }}
+                >
+                  Yatmadan 1 saat önce ekranları kapat
+                </div>
+              </div>
+              <div style={{ fontSize: 7, color: "#64748B", lineHeight: 1.4 }}>
+                Melatonin üretimini %50 artırır
+              </div>
+            </div>
+
+            {/* Blurred second task */}
+            <div
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                borderRadius: 10,
+                padding: "10px",
+                marginTop: 6,
+                filter: "blur(3px)",
+                pointerEvents: "none" as const,
+                opacity: 0.5,
+              }}
+            >
+              <div
+                style={{
+                  height: 8,
+                  background: "#334155",
+                  borderRadius: 4,
+                  marginBottom: 4,
+                  width: "70%",
+                }}
+              />
+              <div
+                style={{ height: 6, background: "#1E293B", borderRadius: 4, width: "50%" }}
+              />
+            </div>
+          </div>
+
+          {/* Bottom nav */}
+          <div
+            style={{
+              background: "#0F172A",
+              padding: "8px 14px 10px",
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
+            {(["🏠", "📊", "🌙", "👤"] as const).map((icon, i) => (
+              <div key={i} style={{ textAlign: "center" as const }}>
+                <div style={{ fontSize: 14 }}>{icon}</div>
+                <div
+                  style={{
+                    width: i === 0 ? 16 : 0,
+                    height: 2,
+                    background: "#7C3AED",
+                    borderRadius: 2,
+                    margin: "2px auto 0",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Feature chips below phone */}
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          marginTop: 20,
+          justifyContent: "center",
+        }}
+      >
+        {[
+          { icon: "📅", text: "21 günlük plan" },
+          { icon: "🎯", text: "Günlük görevler" },
+          { icon: "📈", text: "İlerleme takibi" },
+        ].map((f) => (
+          <div
+            key={f.text}
+            style={{
+              flex: 1,
+              textAlign: "center" as const,
+              background: "#F8FAFC",
+              borderRadius: 12,
+              padding: "10px 6px",
+              border: "1px solid #EDE8F5",
+            }}
+          >
+            <div style={{ fontSize: 18, marginBottom: 4 }}>{f.icon}</div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: "#475569" }}>{f.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Results Page ────────────────────────────────────────────────────────
 export default function ResultsPage() {
   const router = useRouter();
@@ -406,6 +672,10 @@ export default function ResultsPage() {
   const [selectedPlan, setSelectedPlan] = useState<PlanId>("3ay");
   const [countdown, setCountdown] = useState(894); // 14:54
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Exit intent state
+  const [showExitIntent, setShowExitIntent] = useState(false);
+  const [exitIntentShown, setExitIntentShown] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -429,6 +699,18 @@ export default function ResultsPage() {
     }, 1000);
     return () => clearInterval(t);
   }, [loading]);
+
+  useEffect(() => {
+    if (loading || exitIntentShown) return;
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0) {
+        setShowExitIntent(true);
+        setExitIntentShown(true);
+      }
+    };
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => document.removeEventListener("mouseleave", handleMouseLeave);
+  }, [loading, exitIntentShown]);
 
   if (!mounted) return null;
   if (loading) return <LoadingScreen />;
@@ -495,6 +777,106 @@ export default function ResultsPage() {
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
+      {/* ── EXIT INTENT MODAL ───────────────────────────────────────────── */}
+      {showExitIntent && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(0,0,0,0.65)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+          }}
+        >
+          <div
+            style={{
+              background: "#FFFFFF",
+              borderRadius: 24,
+              padding: "32px 24px",
+              maxWidth: 360,
+              width: "100%",
+              textAlign: "center",
+              boxShadow: "0 24px 64px rgba(0,0,0,0.3)",
+            }}
+          >
+            <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
+            <h2
+              style={{
+                fontSize: 20,
+                fontWeight: 800,
+                color: "#1E293B",
+                margin: "0 0 8px",
+                lineHeight: 1.3,
+              }}
+            >
+              Bekle! Planın kaybolmak üzere.
+            </h2>
+            <p
+              style={{
+                fontSize: 14,
+                color: "#64748B",
+                lineHeight: 1.65,
+                margin: "0 0 20px",
+              }}
+            >
+              Sana özel hazırlanan 21 günlük uyku planı 10 dakika içinde silinecek.
+              Şimdi al, istediğin zaman iptal et.
+            </p>
+            <div
+              style={{
+                background: "#FFF7ED",
+                border: "1.5px solid #FED7AA",
+                borderRadius: 12,
+                padding: "12px 16px",
+                marginBottom: 20,
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#F97316",
+                letterSpacing: "0.04em",
+              }}
+            >
+              🏷️ EK10 kodu ile %10 ekstra indirim
+            </div>
+            <button
+              onClick={() => {
+                setShowExitIntent(false);
+                handleCta();
+              }}
+              style={{
+                width: "100%",
+                padding: "15px",
+                background: "#2563EB",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: 14,
+                fontSize: 16,
+                fontWeight: 700,
+                cursor: "pointer",
+                marginBottom: 12,
+              }}
+            >
+              Planımı Kaydet →
+            </button>
+            <button
+              onClick={() => setShowExitIntent(false)}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#94A3B8",
+                fontSize: 13,
+                cursor: "pointer",
+                padding: "4px 8px",
+              }}
+            >
+              Hayır, planı iptal et
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── 1. HEADER ─────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -761,7 +1143,10 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        {/* ── 3. TOP PAYWALL ──────────────────────────────────────────────── */}
+        {/* ── 3. APP PREVIEW ──────────────────────────────────────────────── */}
+        <AppPreviewSection />
+
+        {/* ── 4. TOP PAYWALL ──────────────────────────────────────────────── */}
         {offerActive && (
           <div style={{ marginBottom: 32 }}>
             {/* Offer banner */}
@@ -822,6 +1207,32 @@ export default function ResultsPage() {
                 padding: "20px 18px",
               }}
             >
+              {/* Score-based headline */}
+              <div style={{ textAlign: "center", marginBottom: 16 }}>
+                <h3
+                  style={{
+                    fontSize: 17,
+                    fontWeight: 800,
+                    color: "#1E293B",
+                    margin: "0 0 6px",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {result.sleepScore < 40
+                    ? "⚠️ Uyku sağlığın acil müdahale gerektiriyor"
+                    : result.sleepScore < 65
+                    ? "📋 Planın hazır — iyileşme başlayabilir"
+                    : "✨ İyi temeldesin — şimdi mükemmelleştir"}
+                </h3>
+                <p style={{ fontSize: 13, color: "#64748B", margin: 0 }}>
+                  {result.sleepScore < 40
+                    ? "21 günlük programla skorunu 40+ puan yükseltebilirsin"
+                    : result.sleepScore < 65
+                    ? `${100 - result.sleepScore} puan daha — tam potansiyelinde uyuyabilirsin`
+                    : "Zaten iyi uyuyorsun. Birkaç ayarla mükemmele ulaşabilirsin"}
+                </p>
+              </div>
+
               {/* Discount code box */}
               <div
                 style={{
@@ -924,7 +1335,7 @@ export default function ResultsPage() {
               margin: "0 0 4px",
             }}
           >
-            SleepIQ topluluğuna katılın
+            SleepIQ Erken Erişim
           </h3>
           <p
             style={{
@@ -933,7 +1344,7 @@ export default function ResultsPage() {
               margin: "0 0 16px",
             }}
           >
-            12.847 kişi SleepIQ&apos;yu tercih ediyor
+            İlk kullanıcılar arasında planını oluştur
           </p>
 
           {/* Comparison boxes */}
@@ -1007,7 +1418,7 @@ export default function ResultsPage() {
               textAlign: "center",
             }}
           >
-            🔴 Son 1 saatte 47 kişi uyku planı oluşturdu
+            🔵 Erken erişim: Sınırlı sayıda yer mevcut
           </div>
         </div>
 
