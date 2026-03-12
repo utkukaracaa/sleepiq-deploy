@@ -106,6 +106,7 @@ interface InterstitialCard {
   emoji: string;
   label: string;
   text: string;
+  ageInsight?: Record<string, string>;
   source: string;
   authorImg?: string;
 }
